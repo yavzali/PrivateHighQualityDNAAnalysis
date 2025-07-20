@@ -1,0 +1,98 @@
+# CRITICAL: GENOMIC DATA PROTECTION
+# NEVER push any genomic/DNA data files to GitHub - PRIVACY ESSENTIAL
+
+# Specific genomic data files
+genome_Zehra_Raza_v5_Full_20250403142534.zip
+genome_*.zip
+genome_*.txt
+genome_*.tsv
+
+# 23andMe and other consumer DNA files
+*23andme*.txt
+*23andme*.zip
+*ancestrydna*.txt
+*ancestrydna*.zip
+*myheritage*.txt
+*myheritage*.zip
+*familytreedna*.txt
+*familytreedna*.zip
+
+# Raw genomic data formats
+*.vcf
+*.vcf.gz
+*.bed
+*.bim
+*.fam
+*.ped
+*.map
+*.pgen
+*.psam
+*.pvar
+*.eigenstrat
+*.geno
+*.snp
+*.ind
+
+# Analysis output files with personal data
+*_results/
+*_output/
+analysis_results_*
+personal_analysis_*
+individual_results_*
+
+# Converted genomic data
+converted_data*
+converted_genome*
+processed_data*
+processed_genome*
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# R temp files
+.Rhistory
+.RData
+.Rproj.user/
+*_cache/
+*_files/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Log files
+*.log
+error.log
+debug.log
+
+# Backup files
+*.bak
+*.backup
+*~
+*.tmp
+*.temp
+
+# Large dataset files (if accidentally downloaded)
+*.tar.gz
+*.tgz
+*AADR*
+*GenomeAsia*
+*Reich*
+datasets/
+ancient_dna_data/
+reference_panels/
+
+# CRITICAL WARNING: If you see any genomic files in 'git status', 
+# DO NOT commit them - contact support immediately! 
