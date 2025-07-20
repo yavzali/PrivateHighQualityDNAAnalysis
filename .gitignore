@@ -40,6 +40,10 @@ analysis_results_*
 personal_analysis_*
 individual_results_*
 
+# Results folder - contains personal analysis outputs
+Results/
+Results/*
+
 # Converted genomic data
 converted_data*
 converted_genome*
