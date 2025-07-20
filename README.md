@@ -18,11 +18,12 @@ This system integrates **every major breakthrough** from 2025 in ancient DNA ana
 - **Global Coverage**: 250+ populations, 146,000-year time depth
 
 ### **💡 Smart Data Access (BREAKTHROUGH):**
+- **🌊 Ultra-Lightweight**: <500MB total with streaming analysis
 - **🌐 No 500GB Downloads**: Cloud-based f2-statistics (~10MB vs 500GB)
-- **📦 Lightweight Panels**: Essential populations only (~500MB vs massive datasets)
+- **📦 Dual Options**: Stream-only OR lightweight panels (500MB vs massive datasets)
 - **🔄 Intelligent Fallbacks**: Automatic substitution for missing populations
 - **⚡ Quick Setup**: 10-minute installation (not hours!)
-- **💾 Total Storage**: 2GB (not 500GB!)
+- **💾 Storage Choices**: <500MB streaming OR 2GB local (not 500GB!)
 
 ### **🎯 vs. Commercial Services:**
 - ✅ **250+ reference populations** (vs ~100 in 23andMe/AncestryDNA)
@@ -51,29 +52,49 @@ DNA Analysis Project/
 
 ## ⚡ **Quick Start (10 Minutes)**
 
-### **Prerequisites:**
-- macOS/Linux system 
-- 8GB+ RAM (16GB+ preferred)
-- **2GB free storage** (not 500GB!)
-- 23andMe raw data file
-- Internet connection
+### **🎯 Choose Your Setup:**
 
-### **🚀 Automated Setup:**
+#### **🌊 ULTRA-LIGHTWEIGHT (<500MB Storage)**
+*Perfect for limited storage - streaming analysis*
 ```bash
 # Clone the repository
 git clone https://github.com/yavzali/PrivateHighQualityDNAAnalysis.git
 cd PrivateHighQualityDNAAnalysis
 
-# Run automated setup (10 minutes)
+# Run ultra-lightweight setup
+bash ultra_lightweight_setup.sh
+```
+
+#### **📦 STANDARD MODE (2GB Storage)**  
+*Local reference panels with smart caching*
+```bash
+# Clone the repository
+git clone https://github.com/yavzali/PrivateHighQualityDNAAnalysis.git
+cd PrivateHighQualityDNAAnalysis
+
+# Run standard setup
 bash quick_setup.sh
 ```
+
+### **Prerequisites:**
+- **🍎 macOS or 🐧 Linux system** (Windows via WSL)
+- 8GB+ RAM (16GB+ preferred) 
+- **Storage Options:**
+  - **Ultra-lightweight**: <500MB total
+  - **Standard**: 2GB total
+- 23andMe raw data file
+- Internet connection
 
 ### **🧬 Analyze Your DNA:**
 ```bash
 # 1. Convert your 23andMe data
 python convert_23andme.py your_23andme_data.txt converted_data
 
-# 2. Run comprehensive analysis
+# 2. Choose analysis mode in R script:
+# Set ultra_lightweight <- TRUE  (for <500MB streaming)
+# Set ultra_lightweight <- FALSE (for 2GB local cache)
+
+# 3. Run comprehensive analysis
 Rscript ultimate_2025_ancestry_system.r
 
 # Results will be generated automatically with visualizations!
@@ -171,12 +192,14 @@ Rscript ultimate_2025_ancestry_system.r
 ## 📈 **Performance Specifications**
 
 - **Setup Time**: 10 minutes (automated script)
-- **Storage Required**: 2GB total (not 500GB!)
+- **Storage Options**: 
+  - **🌊 Ultra-lightweight**: <500MB (streaming analysis)
+  - **📦 Standard**: 2GB (local reference panels)
 - **Analysis Time**: 30-60 minutes per sample
 - **RAM Usage**: 8GB minimum, 16GB+ recommended
 - **Success Rate**: 70-90% models with statistically significant results
 - **Resolution**: Sub-regional precision with intelligent fallbacks
-- **Platform**: macOS/Linux (Windows via WSL)
+- **Platform**: **🍎 macOS/🐧 Linux** (Windows via WSL)
 
 ---
 

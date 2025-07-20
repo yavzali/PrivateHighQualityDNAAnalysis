@@ -84,6 +84,10 @@ debug.log
 *.tmp
 *.temp
 
+# Ultra-lightweight streaming config files
+streaming_config.json
+ultra_streaming_functions.r
+
 # Large dataset files (if accidentally downloaded)
 *.tar.gz
 *.tgz
