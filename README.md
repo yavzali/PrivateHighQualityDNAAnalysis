@@ -117,27 +117,28 @@ The ultimate ancestry system produces the specific JSON structure that the PDF g
 
 ### **🎯 Choose Your Setup:**
 
-#### **🌊 ULTRA-LIGHTWEIGHT (<500MB Storage)**
-*Perfect for limited storage - streaming analysis*
+#### **📦 STANDARD MODE (Recommended - 2GB Storage)**  
+*Full functionality with local reference panels*
 ```bash
 # Clone the repository
 git clone https://github.com/yavzali/PrivateHighQualityDNAAnalysis.git
 cd PrivateHighQualityDNAAnalysis
 
-# Run ultra-lightweight setup
-bash ultra_lightweight_setup.sh
-```
-
-#### **📦 STANDARD MODE (2GB Storage)**  
-*Local reference panels with smart caching*
-```bash
-# Clone the repository
-git clone https://github.com/yavzali/PrivateHighQualityDNAAnalysis.git
-cd PrivateHighQualityDNAAnalysis
-
-# Run standard setup
+# Run standard setup (recommended)
 bash quick_setup.sh
 ```
+
+#### **🌊 ULTRA-LIGHTWEIGHT (Experimental - <500MB Storage)**
+*Future streaming analysis - not yet fully implemented*
+```bash
+# Clone the repository
+git clone https://github.com/yavzali/PrivateHighQualityDNAAnalysis.git
+cd PrivateHighQualityDNAAnalysis
+
+# Run ultra-lightweight setup (experimental)
+bash ultra_lightweight_setup.sh
+```
+**⚠️ Note**: Ultra-lightweight mode uses streaming features that are planned but not yet implemented. It will fall back to standard analysis.
 
 ### **Prerequisites:**
 - **🍎 macOS or 🐧 Linux system** (Windows via WSL)
@@ -230,6 +231,13 @@ python ancestry_report_generator.py --sample-name "YourName" --results-dir "."
 - **Intelligent Fallback Systems**: Automatic population substitution
 - **Privacy-First Design**: All personal data analysis done locally
 
+### **🌊 Streaming Analysis (Future Feature):**
+- **Ultra-Lightweight Mode**: <500MB total storage requirement
+- **Cloud-Based Streaming**: Access reference data on-demand
+- **Memory-Only Processing**: No persistent local storage needed
+- **Academic Repository Integration**: Connect to pre-computed statistics
+- **Status**: Planned for future release, currently falls back to local analysis
+
 ### **Comprehensive Dataset Integration:**
 - **AADR**: 10,000+ ancient individuals (smart access)
 - **Iranian Plateau 2025**: 50 samples, 4700 BCE-1300 CE
@@ -285,6 +293,36 @@ python ancestry_report_generator.py --sample-name "YourName" --results-dir "."
 - **Practical storage** - 2GB vs 500GB+ academic datasets
 - **Quick setup** - 10 minutes vs complex academic installations
 - **Comprehensive interpretation** - user-friendly results
+
+---
+
+## 🌊 **Streaming Analysis Features (Future Development)**
+
+### **🎯 Planned Ultra-Lightweight Mode:**
+The system includes infrastructure for streaming analysis that will enable **<500MB total storage** by accessing reference data on-demand from academic repositories.
+
+### **📋 Current Status:**
+- ✅ **Infrastructure Ready**: Streaming functions and configuration files included
+- ✅ **Fallback System**: Gracefully falls back to local analysis when streaming unavailable
+- ✅ **No Functionality Loss**: System works perfectly with current local analysis
+- ⚠️ **Cloud Integration**: Not yet implemented (planned for future release)
+
+### **🚀 Planned Benefits:**
+- **Storage**: <500MB total (vs current 2GB)
+- **Speed**: Ultra-fast analysis with cloud acceleration
+- **Privacy**: Maximum privacy with no local data storage
+- **Accessibility**: Works on low-storage devices
+
+### **📁 Streaming Files:**
+- `ultra_streaming_functions.r` - Streaming function placeholders
+- `streaming_config.json` - Configuration for future streaming
+- `ultra_lightweight_setup.sh` - Setup script for streaming mode
+
+### **💡 For Users:**
+- **Current system is production-ready** with local analysis
+- **2GB storage requirement is reasonable** for full functionality
+- **Streaming will be optional enhancement** when implemented
+- **No functionality will be lost** - only storage optimization
 
 ---
 
