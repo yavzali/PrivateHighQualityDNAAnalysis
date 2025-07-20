@@ -34,24 +34,33 @@ cat("💡 Smart Data Access - No massive downloads required!\n\n")
 if (ultra_lightweight) {
   # 🌊 ULTRA-LIGHTWEIGHT: Streaming analysis (<500MB total)
   cat("🌊 Initializing streaming analysis system...\n")
-  source("ultra_streaming_functions.r")
   
-  use_cloud_data <- TRUE
-  use_streaming <- TRUE
-  data_path <- NULL  # No local storage needed
-  
-  # Stream f2-statistics on demand (~1MB per analysis)
-  load_cloud_f2_stats <- function() {
-    cat("📡 Streaming f2-statistics from cloud...\n")
-    # This would stream pre-computed statistics without local storage
-    # Ultra-efficient: Only download what's needed for your specific analysis
-    
-    # Placeholder for streaming implementation
-    f2_url <- "https://ancient-dna-api.org/stream/f2_stats"
-    # Real implementation would stream data here
-    cat("   ✅ Streaming complete - no local storage used\n")
-    return(NULL)  # Placeholder
+  # Check if streaming functions file exists (created by setup)
+  if (file.exists("ultra_streaming_functions.r")) {
+    source("ultra_streaming_functions.r")
+    cat("   ✅ Streaming functions loaded\n")
+  } else {
+    cat("   ⚠️  Run ultra_lightweight_setup.sh first to enable streaming\n")
+    cat("   📦 Falling back to standard mode for now...\n")
+    ultra_lightweight <- FALSE  # Fallback to standard mode
   }
+  
+  if (ultra_lightweight) {
+    use_cloud_data <- TRUE
+    use_streaming <- TRUE
+    data_path <- NULL  # No local storage needed
+    
+    # Stream f2-statistics on demand (~1MB per analysis)
+    load_cloud_f2_stats <- function() {
+      cat("📡 Streaming f2-statistics from cloud...\n")
+      # Note: This is a placeholder implementation
+      # Real streaming would connect to academic databases
+      cat("   ⚠️  Streaming implementation in development\n")
+      cat("   📦 Using lightweight local cache instead\n")
+      return(NULL)  # Will trigger fallback to lightweight panel
+    }
+  }
+}
   
 } else {
   # 📦 STANDARD MODE: Smart local caching (2GB total)
@@ -61,13 +70,44 @@ if (ultra_lightweight) {
   use_lightweight_panel <- TRUE
   data_path <- "lightweight_reference_panel"  # ~500MB instead of 500GB
   
-  # Try to use admixtools with cloud/remote data access
-  tryCatch({
-    # Use pre-computed f2-statistics from cloud (much smaller)
-    f2_data <- load_cloud_f2_stats()  # Custom function for cloud access
+  # Try to use admixtools with cloud/remote data access (if available)
+  f2_data <- tryCatch({
+    if (exists("load_cloud_f2_stats") && ultra_lightweight) {
+      load_cloud_f2_stats()  # Custom function for cloud access
+    } else {
+      NULL  # Use lightweight panel fallback
+    }
   }, error = function(e) {
-    cat("⚠️  Cloud access not available, switching to lightweight mode...\n")
-    use_lightweight_panel <<- TRUE
+    cat("⚠️  Cloud access not available, using lightweight local panel...\n")
+    NULL  # Will trigger lightweight panel fallback
+  })
+}
+
+# ===============================================
+# 🚀 ENSURE ANALYSIS WORKS RELIABLY
+# ===============================================
+
+# Check if we have f2_data from cloud, if not use lightweight panel
+if (is.null(f2_data) || use_lightweight_panel) {
+  cat("📦 Setting up lightweight reference panel for reliable analysis...\n")
+  
+  # Check if lightweight panel exists, if not create it
+  if (!file.exists(paste0(data_path, ".ind"))) {
+    cat("📥 Creating lightweight reference panel for first-time use...\n")
+    download_lightweight_panel(data_path)
+  }
+  
+  # Load lightweight panel data for analysis
+  tryCatch({
+    f2_data <- extract_f2(data_path,
+                          maxmiss = 0.99,  
+                          auto_only = TRUE,
+                          f2_details = TRUE)
+    cat("✅ Lightweight reference panel loaded successfully!\n")
+  }, error = function(e) {
+    cat("⚠️  Could not load lightweight panel:", e$message, "\n") 
+    cat("💡 Please run the setup script first: bash quick_setup.sh or ultra_lightweight_setup.sh\n")
+    stop("Setup required before analysis can proceed.")
   })
 }
 
@@ -118,26 +158,19 @@ load_cloud_f2_stats <- function() {
   cat("🔄 Attempting to load pre-computed f2-statistics from cloud...\n")
   
   tryCatch({
-    # Example: Connect to pre-computed f2-statistics repository
-    # This could be hosted on GitHub, academic servers, or cloud storage
-    cloud_url <- "https://github.com/admixtools-resources/f2-stats"
+    # Note: Cloud streaming is in development
+    # When fully implemented, this will connect to academic repositories
+    # containing pre-computed f2-statistics, dramatically reducing storage needs
     
-    # Download small f2-statistics file instead of massive raw data
-    f2_file <- "ultimate_2025_f2_stats.rds"
-    if (!file.exists(f2_file)) {
-      cat("📥 Downloading pre-computed f2-statistics (~10MB)...\n")
-      # download.file(paste0(cloud_url, "/", f2_file), f2_file)
-    }
+    cat("   ⚠️  Cloud streaming in development - using local fallback\n")
+    cat("   📦 This ensures the analysis works reliably today\n")
     
-    # Load the pre-computed statistics
-    # f2_data <- readRDS(f2_file)
-    # return(f2_data)
-    
-    # For now, return NULL to trigger fallback
-    stop("Cloud access not implemented yet")
+    # Return NULL to trigger lightweight local panel fallback
+    # This guarantees the system works while cloud features are being developed
+    return(NULL)
     
   }, error = function(e) {
-    cat("⚠️  Cloud access failed:", e$message, "\n")
+    cat("⚠️  Using local fallback instead\n")
     return(NULL)
   })
 }
