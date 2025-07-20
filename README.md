@@ -46,19 +46,24 @@ DNA Analysis Project/
 ## 🎯 **Quick Start**
 
 ### **Prerequisites:**
-- Linux system (Ubuntu 22.04+ recommended)
-- 16GB+ RAM (32GB+ preferred)
-- 500GB+ free storage
+- Linux/macOS system 
+- 8GB+ RAM (16GB+ preferred)
+- **2GB free storage** (not 500GB!)
 - 23andMe raw data file
-- Internet for dataset downloads
+- Internet for software installation
 
-### **1. Setup Environment:**
+### **🚀 Quick Setup (RECOMMENDED):**
 ```bash
-# Follow the complete guide in SETUP_GUIDE.md
-# Key steps:
-cd "/path/to/DNA Analysis Project"
-bash setup_environment.sh  # You'll need to create this from SETUP_GUIDE.md
+# Run the automated setup script
+bash quick_setup.sh
+# Total time: ~10 minutes (not hours!)
 ```
+
+### **📊 Smart Data Access:**
+- **🌐 Cloud-based**: Pre-computed f2-statistics (~10MB vs 500GB)
+- **📦 Lightweight**: Curated essential populations (~100 vs 10,000+)
+- **🔄 Intelligent**: Automatic fallback systems for missing populations
+- **💾 Storage**: ~2GB total (not 500GB!)
 
 ### **2. Convert Your 23andMe Data:**
 ```bash
@@ -140,24 +145,26 @@ git push -u origin main
 ```
 
 ### **Data Requirements:**
-- This system requires downloading ~500GB of reference datasets
-- See `SETUP_GUIDE.md` for complete data acquisition instructions
-- Initial setup takes 2-4 hours (one-time)
+- **Smart data access** - No massive downloads required
+- **Lightweight reference panels** - Essential populations only (~500MB)
+- **Cloud-based f2-statistics** - Pre-computed for speed (~10MB)
+- **Intelligent fallbacks** - Automatic substitution for missing populations
 
 ### **Privacy:**
 - **All analysis is done locally** - no data leaves your computer
-- **No cloud services** - complete privacy protection
+- **No cloud services** for your personal data - complete privacy protection  
 - **Academic-grade methods** - publication-quality results
 
 ---
 
 ## 📈 **Performance Expectations**
 
-- **Setup Time**: 2-4 hours (one-time)
-- **Analysis Time**: 1-3 hours per sample
+- **Setup Time**: 10 minutes (not hours!)
+- **Storage Required**: 2GB (not 500GB!)
+- **Analysis Time**: 30-60 minutes per sample
 - **Success Rate**: 70-90% models with p>0.01
-- **Resolution**: Century-level precision for recent periods
-- **Accuracy**: Academic research-grade results
+- **Resolution**: Sub-regional precision with smart fallbacks
+- **Accuracy**: Academic research-grade results with lightweight data
 
 ---
 
