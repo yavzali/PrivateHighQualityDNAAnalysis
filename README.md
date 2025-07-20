@@ -40,7 +40,8 @@ This system integrates **every major breakthrough** from 2025 in ancient DNA ana
 ```
 DNA Analysis Project/
 ├── 🚀 quick_setup.sh                     # 10-minute automated setup
-├── 🔬 ultimate_2025_ancestry_system.r    # Main analysis engine (54KB, 1077 lines)
+├── 🔬 ultimate_2025_ancestry_system.r    # Main analysis engine (56KB, 1200+ lines)
+├── 📊 ancestry_report_generator.py       # Professional PDF report generator  
 ├── 📄 README.md                          # This comprehensive guide
 ├── 🔄 alternative_models.r               # Additional population models  
 ├── 📖 SETUP_GUIDE.md                     # Detailed technical documentation
@@ -97,7 +98,10 @@ python convert_23andme.py your_23andme_data.txt converted_data
 # 3. Run comprehensive analysis
 Rscript ultimate_2025_ancestry_system.r
 
-# Results will be generated automatically with visualizations!
+# 4. Generate professional PDF report
+python ancestry_report_generator.py --sample-name "YourName" --results-dir "."
+
+# Results: 25+ PNG visualizations + Professional PDF report!
 ```
 
 ---

@@ -1117,3 +1117,105 @@ cat("   • State-of-the-art 2025 methodology\n\n")
 cat("🏆 FINAL RESULT: Most comprehensive consumer ancient DNA analysis system ever created!\n")
 cat("Revolutionary 2025 methods + Complete global coverage + Pakistani/Shia specialization\n")
 cat("Additional Artifacts integration: ✅ COMPLETE AND COMPREHENSIVE! 🚀\n")
+
+# ===============================================
+# 📤 EXPORT FOR PYTHON REPORT GENERATOR
+# ===============================================
+
+# Install jsonlite if not already installed  
+if (!requireNamespace("jsonlite", quietly = TRUE)) {
+  install.packages("jsonlite", repos = "https://cran.r-project.org/")
+}
+library(jsonlite)
+
+cat("\n📤 Exporting results for Python report generator...\n")
+
+# Export function for best models
+export_best_models <- function(models_list) {
+  best_models <- list()
+  successful <- models_list[!sapply(models_list, is.null)]
+  
+  if(length(successful) > 0) {
+    p_values <- sapply(successful, function(x) x$pvalue %||% 0)
+    sorted_indices <- order(p_values, decreasing = TRUE)
+    
+    for(i in 1:min(10, length(sorted_indices))) {
+      idx <- sorted_indices[i]
+      model <- successful[[idx]]
+      model_name <- names(successful)[idx]
+      
+      clean_model <- list(
+        name = model_name,
+        pvalue = round(model$pvalue %||% 0, 6),
+        fit_quality = model$fit_quality %||% "UNKNOWN",
+        method = model$method %||% "Enhanced-qpAdm",
+        components = list()
+      )
+      
+      if(!is.null(model$weights) && !is.null(names(model$weights))) {
+        for(j in 1:length(model$weights)) {
+          pop_name <- names(model$weights)[j]
+          percentage <- round(model$weights[j] * 100, 2)
+          clean_model$components[[pop_name]] <- percentage
+        }
+      }
+      
+      best_models[[i]] <- clean_model
+    }
+  }
+  return(best_models)
+}
+
+# Extract model components
+extract_model_components <- function(model) {
+  if(is.null(model) || is.null(model$weights)) return(list())
+  
+  components <- list()
+  for(i in 1:length(model$weights)) {
+    if(!is.null(names(model$weights)[i])) {
+      pop_name <- names(model$weights)[i]
+      percentage <- round(model$weights[i] * 100, 2)
+      components[[pop_name]] <- percentage
+    }
+  }
+  return(components)
+}
+
+# Create comprehensive JSON export
+json_data <- list(
+  sample_info = list(
+    name = your_sample %||% "Sample",
+    analysis_date = format(Sys.Date(), "%Y-%m-%d"),
+    method = "Revolutionary 2025 Twigstats-Enhanced Analysis"
+  ),
+  
+  ancestry_breakdown = list(
+    Pakistani_Core = if(!is.null(pakistani_core)) extract_model_components(pakistani_core) else list(),
+    Pakistani_4Way = if(!is.null(pakistani_4way)) extract_model_components(pakistani_4way) else list(),
+    Pakistani_UltraHigh = if(!is.null(pakistani_7way)) extract_model_components(pakistani_7way) else list(),
+    Shia_Muslim = if(!is.null(shia_core)) extract_model_components(shia_core) else list(),
+    Bronze_Age = if(!is.null(bronze_age_comprehensive)) extract_model_components(bronze_age_comprehensive) else list(),
+    Iron_Age = if(!is.null(european_iron_age)) extract_model_components(european_iron_age) else list(),
+    Medieval = if(!is.null(central_asian_islamic)) extract_model_components(central_asian_islamic) else list()
+  ),
+  
+  best_models = export_best_models(results_ultimate_2025),
+  
+  quality_metrics = list(
+    total_models_tested = length(results_ultimate_2025),
+    successful_models = length(successful_models),
+    excellent_fits = length(excellent_fits),
+    good_fits = length(good_fits),
+    best_model_pvalue = if(exists("best_model") && !is.null(best_model)) round(best_model$pvalue %||% 0, 6) else 0,
+    best_model_name = best_name %||% "Unknown"
+  ),
+  
+  visualizations = list.files(pattern = "*ultimate_2025.png", full.names = FALSE)
+)
+
+# Write JSON file
+json_filename <- paste0(gsub("\\..*$", "", your_sample %||% "sample"), "_ancestry_results.json")
+write_json(json_data, json_filename, pretty = TRUE, auto_unbox = TRUE)
+
+cat("✅ JSON export complete:", json_filename, "\n")
+cat("🐍 Python report generator can now process your results!\n")

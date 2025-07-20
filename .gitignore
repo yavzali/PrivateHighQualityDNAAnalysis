@@ -88,6 +88,12 @@ debug.log
 streaming_config.json
 ultra_streaming_functions.r
 
+# Example files (copyrighted material - never commit)
+Ancestral Brew Example.pdf
+*example*.pdf
+*Example*.pdf
+sample_report*.pdf
+
 # Large dataset files (if accidentally downloaded)
 *.tar.gz
 *.tgz
