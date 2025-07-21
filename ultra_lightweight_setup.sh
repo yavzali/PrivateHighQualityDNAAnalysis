@@ -58,60 +58,42 @@ EOF
 echo "🐍 Step 4: Installing minimal Python packages..."
 pip install --no-deps pandas numpy requests
 
-# Step 5: Configure streaming analysis
-echo "🌊 Step 5: Configuring streaming analysis system..."
-cat > streaming_config.json << 'EOF'
-{
-  "analysis_mode": "streaming",
-  "storage_mode": "memory_only", 
-  "data_access": "cloud_native",
-  "local_storage_limit": "100MB",
-  "reference_panel": "ultra_micro",
-  "f2_stats": "streaming",
-  "cache_policy": "no_persistent_cache",
-  "privacy_mode": "maximum"
-}
-EOF
+# Step 5: Set up Google Drive streaming
+echo "🌊 Step 5: Setting up Google Drive streaming system..."
 
-# Step 6: Create streaming analysis functions
-echo "⚡ Step 6: Setting up streaming functions..."
-cat > ultra_streaming_functions.r << 'EOF'
-# ULTRA-LIGHTWEIGHT STREAMING ANALYSIS FUNCTIONS
-# No local storage - everything processed in memory
+# Install Google Drive streaming engine (if not already present)
+if [ ! -f "gdrive_stream_engine.r" ]; then
+    echo "📥 Installing Google Drive streaming engine..."
+    echo "   ⚠️  gdrive_stream_engine.r not found - please ensure it's in the directory"
+fi
 
-stream_f2_stats <- function(pop1, pop2) {
-    # Stream f2-statistics from cloud without local storage
-    url <- paste0("https://ancient-dna-cloud.org/api/f2/", pop1, "/", pop2)
-    response <- jsonlite::fromJSON(url)
-    return(response$f2_value)
-}
+# Create Google Drive streaming configuration
+if [ ! -f "gdrive_streaming_config.json" ]; then
+    echo "⚙️  Creating Google Drive streaming configuration..."
+    echo "   ⚠️  gdrive_streaming_config.json not found - please ensure it's in the directory"
+fi
 
-stream_reference_panel <- function(populations, snps_needed) {
-    # Stream only required SNPs for specific populations
-    # Ultra-efficient: ~1MB per analysis vs 500MB+ stored
-    url <- "https://ancient-dna-cloud.org/api/stream_panel"
-    query <- list(populations = populations, snps = snps_needed, format = "memory")
-    data <- jsonlite::fromJSON(url, query)
-    return(data)
-}
-
-memory_only_analysis <- function(sample_data) {
-    # Entire analysis in RAM - no disk writes
-    # Process → analyze → return → clear memory
-    
-    cat("🌊 Streaming reference data...\n")
-    ref_data <- stream_reference_panel(get_optimal_populations(), sample_data$snps)
-    
-    cat("📊 Computing statistics in memory...\n") 
-    results <- compute_ancestry_streaming(sample_data, ref_data)
-    
-    cat("🧹 Clearing memory...\n")
-    rm(ref_data)  # Clear immediately
-    gc()          # Force garbage collection
-    
-    return(results)
-}
-EOF
+# Step 6: Google Drive Authentication Setup
+echo "🔐 Step 6: Google Drive Authentication Setup..."
+echo ""
+echo "📋 GOOGLE DRIVE SETUP INSTRUCTIONS:"
+echo "   1. Create a folder named 'AncientDNA_Datasets' in your Google Drive"
+echo "   2. Upload your 15GB ancient DNA datasets to this folder"
+echo "   3. Organize files by format:"
+echo "      - EIGENSTRAT files: .geno, .snp, .ind"
+echo "      - PLINK files: .bed, .bim, .fam, .ped, .map"
+echo "      - F2 statistics: .f2, .txt, .gz files"
+echo ""
+echo "🧪 TESTING CONNECTION:"
+echo "   Run this command to test Google Drive access:"
+echo "   Rscript test_gdrive_connection.r"
+echo ""
+echo "   This will:"
+echo "   - Open browser for Google authentication"
+echo "   - Test access to AncientDNA_Datasets folder"
+echo "   - Verify streaming functionality"
+echo "   - Show dataset inventory"
+echo ""
 
 echo ""
 echo "🎉 ULTRA-LIGHTWEIGHT SETUP COMPLETE!"

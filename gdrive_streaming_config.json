@@ -1,0 +1,116 @@
+{
+  "_description": "Google Drive Streaming Configuration for Ancient DNA Analysis",
+  "_purpose": "Stream 15GB ancient datasets from Google Drive without local storage",
+  "_status": "ACTIVE - Google Drive streaming implementation",
+  
+  "google_drive": {
+    "folder_name": "AncientDNA_Datasets",
+    "authentication": "browser_oauth",
+    "cache_credentials": true,
+    "auto_reconnect": true
+  },
+  
+  "streaming": {
+    "analysis_mode": "gdrive_streaming",
+    "storage_mode": "memory_only",
+    "data_access": "google_drive_api",
+    "local_storage_limit": "500MB",
+    "temp_cache_size": "100MB",
+    "max_concurrent_downloads": 3
+  },
+  
+  "memory_management": {
+    "auto_cleanup": true,
+    "memory_limit_mb": 2000,
+    "cleanup_after_analysis": true,
+    "force_gc_after_cleanup": true,
+    "temp_file_retention": "analysis_only"
+  },
+  
+  "dataset_priorities": {
+    "primary_format": "eigenstrat",
+    "fallback_format": "plink",
+    "preferred_populations": [
+      "Iran_N",
+      "Iran_ShahrISokhta_BA2", 
+      "Yamnaya_Samara",
+      "Onge.DG",
+      "Pakistan_Harappa",
+      "Pakistan_Rakhigarhi"
+    ],
+    "analysis_specific": {
+      "pakistani_ancestry": [
+        "Iran_ShahrISokhta_BA2",
+        "Iran_HasanluTepe_IA", 
+        "Yamnaya_Samara",
+        "Onge.DG",
+        "Pakistan_Harappa_2800BP"
+      ],
+      "shia_muslim": [
+        "Iran_Sassanid_Ctesiphon",
+        "Iran_Safavid_Isfahan",
+        "Iran_ShahrISokhta_BA2"
+      ]
+    }
+  },
+  
+  "performance": {
+    "chunk_size_mb": 50,
+    "download_timeout_seconds": 300,
+    "retry_attempts": 3,
+    "progress_indicators": true,
+    "parallel_processing": false,
+    "compression_support": ["gz", "zip", "bz2"]
+  },
+  
+  "file_handling": {
+    "supported_formats": {
+      "eigenstrat": [".geno", ".snp", ".ind"],
+      "plink": [".bed", ".bim", ".fam", ".ped", ".map"],
+      "f2_statistics": [".f2", ".txt", ".gz", ".json"]
+    },
+    "format_detection": "automatic",
+    "temp_directory": "system_temp",
+    "file_validation": true
+  },
+  
+  "analysis_optimization": {
+    "snp_intersection_first": true,
+    "population_filtering": true,
+    "smart_caching": true,
+    "preload_common_populations": false,
+    "batch_similar_analyses": true
+  },
+  
+  "error_handling": {
+    "internet_connectivity_check": true,
+    "api_rate_limit_handling": true,
+    "partial_download_recovery": true,
+    "graceful_fallback": "local_analysis",
+    "error_logging": true
+  },
+  
+  "user_experience": {
+    "show_progress_bars": true,
+    "verbose_logging": true,
+    "estimated_time_remaining": true,
+    "memory_usage_monitoring": true,
+    "streaming_status_updates": true
+  },
+  
+  "_implementation_notes": {
+    "authentication": "One-time browser login with credential caching",
+    "data_flow": "Personal genome local + Ancient data streamed",
+    "fallback_behavior": "Falls back to local analysis if streaming fails",
+    "memory_strategy": "Stream → Process → Cleanup → Repeat",
+    "performance_target": "Analysis in <500MB total storage"
+  },
+  
+  "_user_benefits": {
+    "storage_savings": "15GB → <500MB (97% reduction)",
+    "analysis_quality": "Same as local analysis",
+    "setup_simplicity": "One-time Google Drive authentication",
+    "internet_dependency": "Required for ancient datasets only",
+    "privacy": "Personal genome never uploaded to cloud"
+  }
+} 

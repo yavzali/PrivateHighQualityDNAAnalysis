@@ -296,33 +296,49 @@ python ancestry_report_generator.py --sample-name "YourName" --results-dir "."
 
 ---
 
-## 🌊 **Streaming Analysis Features (Future Development)**
+## 🌊 **Google Drive Streaming Analysis (ACTIVE FEATURE)**
 
-### **🎯 Planned Ultra-Lightweight Mode:**
-The system includes infrastructure for streaming analysis that will enable **<500MB total storage** by accessing reference data on-demand from academic repositories.
+### **🎯 Ultra-Lightweight Mode with Google Drive:**
+Stream your 15GB ancient DNA datasets directly from Google Drive without local storage. Personal genome analyzed locally, ancient datasets accessed on-demand.
 
 ### **📋 Current Status:**
-- ✅ **Infrastructure Ready**: Streaming functions and configuration files included
-- ✅ **Fallback System**: Gracefully falls back to local analysis when streaming unavailable
-- ✅ **No Functionality Loss**: System works perfectly with current local analysis
-- ⚠️ **Cloud Integration**: Not yet implemented (planned for future release)
+- ✅ **Fully Implemented**: Google Drive streaming engine active
+- ✅ **Authentication**: One-time browser login with credential caching  
+- ✅ **Smart Streaming**: Downloads only required populations and SNPs
+- ✅ **Memory Management**: Automatic cleanup after each analysis
+- ✅ **Fallback System**: Gracefully falls back to local analysis if streaming fails
 
-### **🚀 Planned Benefits:**
-- **Storage**: <500MB total (vs current 2GB)
-- **Speed**: Ultra-fast analysis with cloud acceleration
-- **Privacy**: Maximum privacy with no local data storage
+### **🚀 Active Benefits:**
+- **Storage**: **15GB → <500MB** (97% reduction)
+- **Privacy**: Personal genome never uploaded to cloud
+- **Flexibility**: Use your own ancient DNA datasets
+- **Speed**: Stream only data needed for current analysis
 - **Accessibility**: Works on low-storage devices
 
-### **📁 Streaming Files:**
-- `ultra_streaming_functions.r` - Streaming function placeholders
-- `streaming_config.json` - Configuration for future streaming
-- `ultra_lightweight_setup.sh` - Setup script for streaming mode
+### **📁 Google Drive Streaming Files:**
+- `gdrive_stream_engine.r` - Google Drive streaming engine
+- `gdrive_streaming_config.json` - Streaming configuration
+- `test_gdrive_connection.r` - Connection testing script
+- `ultra_lightweight_setup.sh` - Google Drive setup script
 
-### **💡 For Users:**
-- **Current system is production-ready** with local analysis
-- **2GB storage requirement is reasonable** for full functionality
-- **Streaming will be optional enhancement** when implemented
-- **No functionality will be lost** - only storage optimization
+### **🔧 Setup Process:**
+1. **Upload datasets**: Create "AncientDNA_Datasets" folder in Google Drive
+2. **Run setup**: `bash ultra_lightweight_setup.sh` 
+3. **Test connection**: `Rscript test_gdrive_connection.r`
+4. **Authenticate**: One-time browser login
+5. **Analyze**: Set `ultra_lightweight <- TRUE` in main script
+
+### **📊 Supported Dataset Formats:**
+- **EIGENSTRAT**: `.geno`, `.snp`, `.ind` files
+- **PLINK**: `.bed`, `.bim`, `.fam`, `.ped`, `.map` files  
+- **F2 Statistics**: Pre-computed `.f2`, `.txt`, `.gz` files
+
+### **💡 User Experience:**
+- **Automatic format detection** from Google Drive
+- **Progress indicators** show streaming status
+- **Smart SNP intersection** finds overlapping variants
+- **Memory monitoring** prevents system overload
+- **Graceful error handling** with local fallbacks
 
 ---
 

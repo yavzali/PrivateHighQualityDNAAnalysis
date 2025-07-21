@@ -41,13 +41,23 @@ echo "📚 Step 3: Installing R packages..."
 R --vanilla << 'EOF'
 # Essential packages for analysis
 install.packages(c("tidyverse", "data.table", "plotly", "viridis", 
-                   "patchwork", "scales", "remotes"), repos="https://cran.r-project.org/")
+                   "patchwork", "scales", "remotes", "googledrive", "httr"), 
+                   repos="https://cran.r-project.org/")
 
 # Install ADMIXTOOLS 2 (lightweight version)
 remotes::install_github("uqrmaie1/admixtools", upgrade = "never")
 
 cat("✅ R packages installed!\n")
 EOF
+
+# Step 3.5: Set up Google Drive authentication (optional)
+echo "🔐 Step 3.5: Google Drive setup (for streaming analysis)..."
+echo "💡 This is optional - only needed for ultra-lightweight streaming mode"
+echo "   If you want to use Google Drive streaming (<500MB storage):"
+echo "   1. Upload your 15GB ancient datasets to a folder named 'AncientDNA_Datasets'"
+echo "   2. Run: Rscript test_gdrive_connection.r"
+echo "   3. Follow browser authentication prompts"
+echo ""
 
 # Step 4: Install Python packages
 echo "🐍 Step 4: Installing Python packages..."
