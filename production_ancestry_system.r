@@ -78,6 +78,172 @@ cat("🔬 Analysis method: ADMIXTOOLS 2 qpAdm with full statistical validation\n
 cat("\n")
 
 # ===============================================
+# 🌊 GOOGLE DRIVE STREAMING F2 DATASET CREATION
+# ===============================================
+
+create_streaming_f2_dataset <- function(input_prefix) {
+  cat("🌊 Creating memory-optimized ancient DNA analysis with curated populations...\n")
+  
+  # Load enhanced population curation system
+  source("Claude Artifacts/enhanced_populations.r")
+  
+  # Authenticate and get dataset inventory
+  authenticate_gdrive()
+  folder_id <- find_ancient_datasets_folder()
+  inventory <- get_dataset_inventory(folder_id)
+  
+  # Create reference data directory
+  ref_dir <- file.path(dirname(input_prefix), "ancient_reference")
+  if (!dir.exists(ref_dir)) {
+    dir.create(ref_dir, recursive = TRUE)
+  }
+  
+  # Download HO dataset (more manageable than 1240k)
+  cat("📥 Downloading Human Origins (HO) reference panel for population curation...\n")
+  cat("   🧠 Will use intelligent population selection to avoid memory issues\n")
+  
+  # Find HO files
+  geno_file <- inventory$eigenstrat[inventory$eigenstrat$name == "v62.0_HO_public.geno", ]
+  snp_file <- inventory$eigenstrat[inventory$eigenstrat$name == "v62.0_HO_public.snp", ]
+  ind_file <- inventory$eigenstrat[inventory$eigenstrat$name == "v62.0_HO_public.ind", ]
+  
+  if (nrow(geno_file) == 0 || nrow(snp_file) == 0 || nrow(ind_file) == 0) {
+    stop("❌ HO dataset files not found in Google Drive")
+  }
+  
+  # Download files
+  ancient_prefix <- file.path(ref_dir, "ancient_ref")
+  geno_path <- paste0(ancient_prefix, ".geno")
+  snp_path <- paste0(ancient_prefix, ".snp")
+  ind_path <- paste0(ancient_prefix, ".ind")
+  
+  cat("   📥 Downloading .ind file first to analyze available populations...\n")
+  drive_download(as_id(ind_file$id[1]), path = ind_path, overwrite = TRUE)
+  
+  # Read population list from .ind file to select optimal subset
+  ind_data <- read.table(ind_path, header = FALSE, stringsAsFactors = FALSE)
+  available_populations <- unique(ind_data$V3)  # Third column contains population names
+  
+  cat("   📊 Available populations in HO dataset:", length(available_populations), "\n")
+  
+  # Use enhanced population selection optimized for 24GB MacBook
+  # Safe target: use ~8GB of 24GB available (33% utilization)
+  # 8GB = 8,192MB ÷ 0.8MB per population = ~10,000 populations max
+  # Conservative target: 2,000 populations for high quality with safety margin
+  sample_name <- basename(input_prefix)
+  selected_populations <- select_optimal_populations(sample_name, NULL, max_populations = 2000)
+  
+  # Filter to actually available populations
+  selected_populations <- intersect(selected_populations, available_populations)
+  
+  cat("   🎯 Selected", length(selected_populations), "populations for analysis\n")
+  cat("   💾 Estimated memory usage:", round(length(selected_populations) * 0.8), "MB\n")
+  
+  # Now download the other files
+  cat("   📥 Downloading .snp file...\n")
+  drive_download(as_id(snp_file$id[1]), path = snp_path, overwrite = TRUE)
+  
+  cat("   📥 Downloading .geno file...\n")
+  drive_download(as_id(geno_file$id[1]), path = geno_path, overwrite = TRUE)
+  
+  cat("✅ Ancient reference panel downloaded\n")
+  
+  tryCatch({
+    # Extract f2 statistics with population filtering
+    cat("🔬 Extracting f2 statistics from selected populations...\n")
+    f2_outdir <- file.path(dirname(input_prefix), "f2_statistics")
+    if (!dir.exists(f2_outdir)) {
+      dir.create(f2_outdir, recursive = TRUE)
+    }
+    
+    # Extract f2 with population filtering to manage memory
+    cat("   🔧 Running extract_f2 with population filtering...\n")
+    extract_f2(ancient_prefix, 
+               outdir = f2_outdir, 
+               pops = selected_populations,  # Key: only selected populations
+               maxmiss = 0.8, 
+               minmaf = 0.001)
+    
+    # Now read the generated f2 statistics files
+    cat("   📖 Reading generated f2 statistics files...\n")
+    f2_data <- read_f2(f2_outdir)
+    
+    # Debug: check the structure of f2_data
+    cat("   🔍 F2 data structure:", class(f2_data), "\n")
+    cat("   🔍 F2 data length/dim:", ifelse(is.list(f2_data), length(f2_data), length(f2_data)), "\n")
+    
+    # Handle different possible return types from read_f2
+    if (is.list(f2_data)) {
+      if ("pop" %in% names(f2_data) && "snp" %in% names(f2_data)) {
+        cat("✅ F2 statistics loaded successfully (list format)\n")
+        cat("   📊 Populations in f2 data:", length(unique(f2_data$pop)), "\n")
+        cat("   📊 SNPs in f2 data:", length(unique(f2_data$snp)), "\n")
+      } else {
+        cat("   🔍 F2 data list names:", paste(names(f2_data), collapse = ", "), "\n")
+        # Try to extract the actual f2 data from the list
+        if (length(f2_data) > 0) {
+          f2_data <- f2_data[[1]]  # Take first element if it's a list
+          cat("   🔧 Using first element of f2 data list\n")
+        }
+      }
+    }
+    
+    # Validate f2_data structure
+    if (is.null(f2_data) || (!is.list(f2_data) && !is.data.frame(f2_data))) {
+      cat("❌ F2 data is not in expected format, attempting alternative loading...\n")
+      # Try to read directly from the f2 files
+      f2_files <- list.files(f2_outdir, pattern = "*.f2.gz", full.names = TRUE)
+      if (length(f2_files) > 0) {
+        cat("   📁 Found", length(f2_files), "f2 files, using first one\n")
+        f2_data <- f2_files[1]  # Use file path instead
+        attr(f2_data, "f2_files") <- f2_files
+        attr(f2_data, "f2_dir") <- f2_outdir
+      } else {
+        stop("No f2 files found in output directory")
+      }
+    }
+    
+    cat("✅ F2 statistics ready for analysis\n")
+    
+    # Check SNP overlap with personal genome
+    cat("📊 Checking SNP overlap with personal genome...\n")
+    personal_data <- read_plink(input_prefix)
+    personal_snps <- personal_data$bim$snp
+    f2_snps <- unique(f2_data$snp)
+    overlapping_snps <- intersect(personal_snps, f2_snps)
+    
+    cat("   📈 Personal genome SNPs:", length(personal_snps), "\n")
+    cat("   📈 Selected ancient reference SNPs:", length(f2_snps), "\n")
+    cat("   📊 Overlapping SNPs:", length(overlapping_snps), "\n")
+    
+    if (length(overlapping_snps) < 1000) {
+      cat("⚠️  Warning: Only", length(overlapping_snps), "overlapping SNPs\n")
+      cat("   Analysis quality may be limited, but will proceed\n")
+    }
+    
+    # Add metadata about the curated analysis
+    attr(f2_data, "streaming") <- TRUE
+    attr(f2_data, "personal_genome") <- input_prefix
+    attr(f2_data, "ancient_source") <- "HO_public_curated"
+    attr(f2_data, "overlapping_snps") <- length(overlapping_snps)
+    attr(f2_data, "selected_populations") <- selected_populations
+    attr(f2_data, "memory_optimized") <- TRUE
+    attr(f2_data, "hybrid_mode") <- TRUE
+    
+    cat("✅ Memory-optimized f2 dataset ready for ancestry analysis\n")
+    cat("   🧠 Using", length(selected_populations), "curated populations\n")
+    cat("   💾 Memory usage optimized for consumer hardware\n")
+    cat("   🎯 Maintains statistical rigor with intelligent population selection\n")
+    
+    return(f2_data)
+    
+  }, error = function(e) {
+    cat("❌ Error processing datasets:", e$message, "\n")
+    stop("Failed to create memory-optimized f2 dataset")
+  })
+}
+
+# ===============================================
 # 🔬 OPTIMIZED F2 STATISTICS EXTRACTION
 # ===============================================
 
@@ -209,17 +375,41 @@ run_enhanced_qpadm <- function(target, sources, outgroups, f2_data, label) {
   tryCatch({
     cat("⚡ Running qpAdm statistical analysis...\n")
     
-    # Check if we're using demo data
-    if (!is.null(attr(f2_data, "demo")) && attr(f2_data, "demo")) {
-      cat("🎭 Using demonstration mode - generating realistic results\n")
-      result <- create_demo_qpadm_result(target, sources, outgroups)
+    # Check if we're using file-based f2 data
+    if (!is.null(attr(f2_data, "f2_dir"))) {
+      cat("🔬 File-based f2 mode: Using f2 statistics directory\n")
+      f2_dir <- attr(f2_data, "f2_dir")
+      personal_prefix <- attr(f2_data, "personal_genome")
+      
+      # Run qpAdm with f2 directory and personal genome
+      result <- qpadm(f2_dir,
+                      target = target,
+                      left = sources,
+                      right = outgroups,
+                      target_pop_file = personal_prefix,
+                      allsnps = TRUE,
+                      auto_only = TRUE)
+    } else if (is.character(f2_data) && length(f2_data) == 1) {
+      # f2_data is a file path
+      cat("🔬 File path mode: Using f2 statistics file\n")
+      personal_prefix <- attr(f2_data, "personal_genome")
+      
+      result <- qpadm(f2_data,
+                      target = target,
+                      left = sources,
+                      right = outgroups,
+                      target_pop_file = personal_prefix,
+                      allsnps = TRUE,
+                      auto_only = TRUE)
     } else {
+      # Standard qpAdm call with data structure
+      cat("🔬 Standard mode: Using f2 data structure\n")
       result <- qpadm(f2_data,
                       target = target,
                       left = sources,
                       right = outgroups,
                       allsnps = TRUE,
-                      auto_only = TRUE)  # Automatically remove problematic SNPs
+                      auto_only = TRUE)
     }
     
     # Extract and validate results
@@ -659,106 +849,7 @@ run_adaptive_focused_analysis <- function(target, f2_data, available_outgroups, 
   return(focused_results)
 }
 
-# ===============================================
-# 🎭 DEMONSTRATION F2 DATA CREATION
-# ===============================================
 
-create_demo_f2_data <- function(sample_name) {
-  cat("🎭 Creating demonstration f2 statistics for testing...\n")
-  
-  # Create a realistic f2 data structure for demonstration
-  # This simulates what would come from real reference populations
-  
-  # Common populations for South/Central Asian analysis
-  demo_populations <- c(
-    sample_name,           # Personal sample
-    "Mbuti.DG",           # African outgroup
-    "Yoruba.DG",          # African outgroup  
-    "Han.DG",             # East Asian
-    "CEU.DG",             # European
-    "Iran_N",             # Iranian Neolithic
-    "Onge.DG",            # AASI proxy
-    "Yamnaya_Samara",     # Steppe
-    "Anatolia_N",         # Anatolian Neolithic
-    "CHG",                # Caucasus Hunter-Gatherer
-    "Karitiana.DG",       # Native American
-    "Papuan.DG"           # Oceanian
-  )
-  
-  # Generate synthetic SNP data
-  num_snps <- 50000  # Reasonable number for demonstration
-  snp_names <- paste0("rs", 1:num_snps)
-  
-  # Create f2 data structure that mimics real ADMIXTOOLS 2 output
-  f2_data <- list()
-  f2_data$pop <- demo_populations
-  f2_data$snp <- snp_names
-  
-  # Add metadata
-  attr(f2_data, "class") <- "f2_data"
-  attr(f2_data, "demo") <- TRUE
-  attr(f2_data, "note") <- "Demonstration data - use Google Drive streaming for real analysis"
-  
-  cat("✅ Demo f2 data created with", length(demo_populations), "populations and", num_snps, "SNPs\n")
-  cat("📋 Available populations:", paste(demo_populations, collapse = ", "), "\n")
-  
-  return(f2_data)
-}
-
-create_demo_qpadm_result <- function(target, sources, outgroups) {
-  cat("🎭 Creating demonstration qpAdm result for:", paste(sources, collapse = " + "), "\n")
-  
-  # Generate realistic ancestry proportions based on model type
-  num_sources <- length(sources)
-  
-  # Create realistic weights based on common South/Central Asian patterns
-  if ("Iran_N" %in% sources && "Onge.DG" %in% sources && "Yamnaya_Samara" %in% sources) {
-    # Pakistani/South Asian pattern
-    weights <- c(0.45, 0.35, 0.20)  # Iran_N, AASI, Steppe
-  } else if (length(sources) == 2) {
-    # 2-way model
-    weights <- c(0.65, 0.35)
-  } else if (length(sources) == 4) {
-    # 4-way model
-    weights <- c(0.42, 0.28, 0.18, 0.12)
-  } else {
-    # Generic balanced weights
-    weights <- rep(1/num_sources, num_sources)
-    # Add some realistic variation
-    weights <- weights + runif(num_sources, -0.1, 0.1)
-    weights <- pmax(weights, 0.01)  # Ensure positive
-    weights <- weights / sum(weights)  # Normalize
-  }
-  
-  # Ensure we have the right number of weights
-  if (length(weights) != num_sources) {
-    weights <- rep(1/num_sources, num_sources)
-  }
-  
-  # Generate realistic standard errors (smaller for larger components)
-  se <- pmax(0.02, weights * 0.15 + 0.01)
-  
-  # Generate realistic p-value (higher for better fitting models)
-  if (num_sources <= 3) {
-    pvalue <- runif(1, 0.01, 0.8)  # More likely to be significant
-  } else {
-    pvalue <- runif(1, 0.001, 0.1)  # Harder to fit with more sources
-  }
-  
-  # Create result structure matching real qpAdm output
-  result <- list(
-    weights = weights,
-    se = se,
-    pvalue = pvalue,
-    target = target,
-    left = sources,
-    right = outgroups
-  )
-  
-  cat("🎭 Demo result: p =", sprintf("%.6f", pvalue), "\n")
-  
-  return(result)
-}
 
 # ===============================================
 # 🚀 MAIN ANALYSIS EXECUTION
@@ -781,7 +872,6 @@ for (file in required_files) {
 cat("\n")
 
 # Extract f2 statistics using optimized method
-# For single-individual datasets, create demonstration f2 statistics
 cat("🔬 Checking dataset composition...\n")
 
 # Read the .fam file to check number of individuals/populations
@@ -793,12 +883,17 @@ num_populations <- length(unique(fam_data$V1))
 cat("📊 Dataset contains:", num_individuals, "individuals in", num_populations, "population(s)\n")
 
 if (num_populations == 1 && num_individuals == 1) {
-  cat("⚠️  Single individual detected - creating demonstration analysis\n")
-  cat("💡 For real f2 statistics, use Google Drive streaming with reference populations\n")
+  if (!GDRIVE_STREAMING) {
+    cat("❌ ERROR: Single individual genome detected but Google Drive streaming not available\n")
+    cat("💡 This system requires ancient DNA datasets for ancestry analysis\n")
+    cat("🔧 Google Drive streaming engine not loaded - cannot access reference populations\n")
+    stop("Cannot perform ancestry analysis: Google Drive streaming required but not available")
+  }
   
-  # Create demonstration f2 data structure for testing
-  f2_data <- create_demo_f2_data(your_sample)
-  
+  cat("🌊 Single individual detected - MUST use Google Drive ancient DNA streaming\n")
+  cat("☁️  Downloading and merging with ancient reference populations...\n")
+  # Use Google Drive streaming for real analysis - this is mandatory
+  f2_data <- create_streaming_f2_dataset(input_prefix)
 } else {
   # Standard f2 extraction for multi-population datasets
   f2_data <- extract_enhanced_f2(input_prefix)

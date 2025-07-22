@@ -1,54 +1,60 @@
-# CRITICAL: GENOMIC DATA PROTECTION
-# NEVER push any genomic/DNA data files to GitHub - PRIVACY ESSENTIAL
+# 🧬 DNA Analysis Project - Git Ignore Rules
 
-# Specific genomic data files
-genome_Zehra_Raza_v5_Full_20250403142534.zip
-genome_*.zip
+# ===============================================
+# 📁 ANALYSIS RESULTS (Always ignore)
+# ===============================================
+Results/
+results/
+output/
+*.results/
+
+# ===============================================
+# 🧬 GENOME DATA (Privacy protection)
+# ===============================================
+# Raw genome files
+*.txt
 genome_*.txt
-genome_*.tsv
+genome_*.csv
+genome_*.zip
+*.23andme
+*.ancestrydna
 
-# 23andMe and other consumer DNA files
-*23andme*.txt
-*23andme*.zip
-*ancestrydna*.txt
-*ancestrydna*.zip
-*myheritage*.txt
-*myheritage*.zip
-*familytreedna*.txt
-*familytreedna*.zip
-
-# Raw genomic data formats
-*.vcf
-*.vcf.gz
+# Converted genome files
 *.bed
 *.bim
 *.fam
 *.ped
 *.map
-*.pgen
-*.psam
-*.pvar
-*.eigenstrat
 *.geno
 *.snp
 *.ind
 
-# Analysis output files with personal data
-*_results/
-*_output/
-analysis_results_*
-personal_analysis_*
-individual_results_*
+# ===============================================
+# 🔐 AUTHENTICATION & CREDENTIALS
+# ===============================================
+# Google credentials (keep template, ignore actual)
+google_credentials.json
+*.json.backup
+.credentials/
+.auth/
+.token*
+.httr-oauth*
 
-# Results folder - contains personal analysis outputs
-Results/
-Results/*
+# ===============================================
+# 💾 TEMPORARY & CACHE FILES  
+# ===============================================
+# R temporary files
+.Rhistory
+.RData
+.Ruserdata
+*.Rout
+*.rds
 
-# Converted genomic data
-converted_data*
-converted_genome*
-processed_data*
-processed_genome*
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
 
 # System files
 .DS_Store
@@ -59,61 +65,59 @@ processed_genome*
 ehthumbs.db
 Thumbs.db
 
-# R temp files
-.Rhistory
-.RData
-.Rproj.user/
-*_cache/
-*_files/
+# ===============================================
+# 📊 LARGE DATASETS (Optional - for space saving)
+# ===============================================
+# Uncomment if you want to ignore large reference files
+# ancient_reference/
+# f2_statistics/
+# *.f2
+# *.geno.gz
+# *.bed.gz
 
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-.venv/
-
-# Log files
+# ===============================================
+# 🔧 BUILD & LOG FILES
+# ===============================================
 *.log
-error.log
-debug.log
+*.out
+*.err
+setup_log.txt
+build/
+dist/
+*.egg-info/
 
-# Backup files
-*.bak
-*.backup
+# ===============================================
+# 📝 EDITOR & IDE FILES
+# ===============================================
+.vscode/
+.idea/
+*.swp
+*.swo
 *~
+*.sublime-*
+
+# ===============================================
+# 🧪 DEVELOPMENT & TESTING
+# ===============================================
+test_output/
+debug/
+temp/
+tmp/
 *.tmp
 *.temp
 
-# Ultra-lightweight streaming config files
-streaming_config.json
-ultra_streaming_functions.r
+# ===============================================
+# ✅ EXPLICITLY INCLUDE (Override above rules)
+# ===============================================
+# Keep essential files even if they match patterns above
+!README.md
+!SETUP_GUIDE.md
+!quick_setup.sh
+!*.r
+!*.py
+!Ancestral*.pdf
+!.gitignore
 
-# Google Drive API credentials (CRITICAL - NEVER commit)
-client_secret_*.json
-google_credentials.json
-*.json
-!gdrive_streaming_config.json
-!package.json
-
-# Example files (copyrighted material - never commit)
-Ancestral Brew Example.pdf
-*example*.pdf
-*Example*.pdf
-sample_report*.pdf
-
-# Large dataset files (if accidentally downloaded)
-*.tar.gz
-*.tgz
-*AADR*
-*GenomeAsia*
-*Reich*
-datasets/
-ancient_dna_data/
-reference_panels/
-
-# CRITICAL WARNING: If you see any genomic files in 'git status', 
-# DO NOT commit them - contact support immediately! 
+# Keep example/template files
+!google_credentials.json.template
+!example_genome.txt 
