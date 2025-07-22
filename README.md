@@ -57,7 +57,7 @@ This system integrates **every major breakthrough** from 2025 in ancient DNA ana
 ```
 DNA Analysis Project/
 ├── 🚀 quick_setup.sh                        # 10-minute automated setup
-├── 🔬 ultimate_2025_ancestry_system.r       # Main analysis engine (64KB, 1300+ lines)
+├── 🔬 production_ancestry_system.r          # Production analysis engine (26KB, 673 lines)
 ├── 📊 ancestry_report_generator.py          # Professional PDF report generator (75KB)
 ├── 🧬 convert_23andme_binary.py             # Binary PLINK converter for ADMIXTOOLS 2
 ├── 📖 DEPENDENCY_INSTALLATION_GUIDE.md      # Complete setup documentation
@@ -90,7 +90,7 @@ DNA Analysis Project/
 ### **🎯 Correct Analysis Pipeline:**
 1. **Genome Input** → Raw genome file (23andMe, AncestryDNA, etc.)
 2. **Convert 23andMe** → `convert_23andme_binary.py` → Binary PLINK format (.bed/.bim/.fam)
-3. **Ultimate Ancestry System** → `ultimate_2025_ancestry_system.r` → JSON results
+3. **Production Ancestry System** → `production_ancestry_system.r` → JSON results
 4. **Ancestry PDF Report Generator** → `ancestry_report_generator.py` → Professional PDF
 
 ### **❌ COMMON MISTAKES TO AVOID:**
@@ -107,7 +107,7 @@ DNA Analysis Project/
 
 ### **Data Flow:**
 ```
-Genome → Binary PLINK → ultimate_2025_ancestry_system.r → ancestry_results.json → ancestry_report_generator.py → PDF
+Genome → Binary PLINK → production_ancestry_system.r → ancestry_results.json → ancestry_report_generator.py → PDF
 ```
 
 The ultimate ancestry system produces the specific JSON structure that the PDF generator expects. Any deviation breaks the integration.
@@ -156,14 +156,13 @@ bash ultra_lightweight_setup.sh
 ### **🧬 Analyze Your DNA:**
 ```bash
 # 1. Convert your 23andMe data
-python convert_23andme.py your_23andme_data.txt converted_data
+python convert_23andme_binary.py your_23andme_data.txt converted_data
 
-# 2. Choose analysis mode in R script:
-# Set ultra_lightweight <- TRUE  (for <500MB streaming)
-# Set ultra_lightweight <- FALSE (for 2GB local cache)
+# 2. Production analysis automatically detects streaming capability
+# (No manual configuration needed)
 
-# 3. Run comprehensive analysis
-Rscript ultimate_2025_ancestry_system.r
+# 3. Run production analysis
+Rscript production_ancestry_system.r converted_data Results/
 
 # 4. Generate professional PDF report
 python ancestry_report_generator.py --sample-name "YourName" --results-dir "."

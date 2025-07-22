@@ -119,6 +119,6 @@ cat("   📈 F2 statistics:", nrow(inventory$f2_stats), "\n")
 
 cat("\n🚀 READY FOR STREAMING ANALYSIS!\n")
 cat("   💡 You can now run the ultimate ancestry system with ultra_lightweight = TRUE\n")
-cat("   📋 Command: Rscript ultimate_2025_ancestry_system.r Results/Zehra_Raza Results/\n")
+cat("   📋 Command: Rscript production_ancestry_system.r Results/Zehra_Raza Results/\n")
 
 cat("\n✅ All Google Drive streaming tests PASSED!\n") 

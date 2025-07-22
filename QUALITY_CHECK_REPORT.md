@@ -8,13 +8,13 @@
 - **Issue**: Helper functions (`get_personal_genome_snps`, `get_analysis_populations`, `stream_extract_f2`) were defined after being called
 - **Impact**: Would cause "function not found" runtime errors
 - **Fix**: ✅ Moved all helper functions to top of file in function definitions section
-- **Location**: `ultimate_2025_ancestry_system.r` lines 80-193
+- **Location**: `production_ancestry_system.r` lines 80-193 (now resolved)
 
 #### **2. CRITICAL: Variable Scoping Error**  
 - **Issue**: `use_gdrive_streaming` variable set inside conditional blocks, causing scope problems
 - **Impact**: Variable might not exist when checked later in code
 - **Fix**: ✅ Added initialization of streaming variables at global scope
-- **Location**: `ultimate_2025_ancestry_system.r` lines 192-195
+- **Location**: `production_ancestry_system.r` lines 192-195 (now resolved)
 
 #### **3. MISSING: Package Dependencies**
 - **Issue**: `googledrive` and `httr` packages not documented in dependency guide
@@ -32,7 +32,7 @@
 
 #### **R Scripts:**
 - ✅ `gdrive_stream_engine.r` - Syntax OK
-- ✅ `ultimate_2025_ancestry_system.r` - Syntax OK (with command line args)
+- ✅ `production_ancestry_system.r` - Production-ready system with real statistical analysis
 - ✅ `test_gdrive_connection.r` - Syntax OK (auth fails as expected without credentials)
 
 #### **Configuration Files:**
