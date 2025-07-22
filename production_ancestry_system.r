@@ -665,7 +665,7 @@ cat("\n")
 cat("════════════════════════════════════════════════════════════════\n")
 
 cat("\n💡 NEXT STEPS:\n")
-cat("1. Run: python ancestry_report_generator.py --sample-name '", your_sample, "' --results-dir '", output_dir, "'\n", sep="")
+cat("1. Run: python ancestry_report_generator.py --sample-name '", your_sample, "' --results-dir '", output_dir, "' --output-dir '", output_dir, "'\n", sep="")
 cat("2. Your professional ancestry report will be generated\n")
 cat("3. All results are scientifically validated with statistical confidence\n\n")
 
