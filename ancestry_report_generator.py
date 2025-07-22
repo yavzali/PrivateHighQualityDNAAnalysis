@@ -934,14 +934,26 @@ class AncestryReportGenerator:
         
         # Try all_models format (from production system) - PRIORITY 2
         elif 'all_models' in results and results['all_models']:
-            # Find the best model from all_models
+            # Handle both old format (dict) and new format (nested dict with categories)
+            all_models_data = results['all_models']
             best_model = None
             best_pvalue = 0
             
-            for model_name, model_data in results['all_models'].items():
-                if 'p_value' in model_data and model_data['p_value'] > best_pvalue:
-                    best_pvalue = model_data['p_value']
-                    best_model = model_data
+            # Check if it's the new nested format with categories
+            if isinstance(all_models_data, dict) and any(isinstance(v, dict) and len(v) > 0 for v in all_models_data.values()):
+                # New format: iterate through categories
+                for category_name, category_models in all_models_data.items():
+                    if isinstance(category_models, dict):
+                        for model_name, model_data in category_models.items():
+                            if 'p_value' in model_data and model_data['p_value'] > best_pvalue:
+                                best_pvalue = model_data['p_value']
+                                best_model = model_data
+            else:
+                # Old format: direct model dict
+                for model_name, model_data in all_models_data.items():
+                    if 'p_value' in model_data and model_data['p_value'] > best_pvalue:
+                        best_pvalue = model_data['p_value']
+                        best_model = model_data
             
             if best_model and 'ancestry_components' in best_model:
                 percentages = best_model['ancestry_components']
@@ -1154,8 +1166,23 @@ class AncestryReportGenerator:
             best_model = results.get('best_model', {})
             quality_metrics = results.get('quality_metrics', {})
             technical_info = results.get('technical_info', {})
+            global_screening = results.get('global_screening', {})
             
             confidence_text_parts = []
+            
+            # Global screening information
+            if global_screening:
+                unexpected_ancestries = global_screening.get('unexpected_ancestries', {})
+                screening_models = global_screening.get('screening_models', 0)
+                
+                confidence_text_parts.append(f"<b>Global Screening Models:</b> {screening_models}")
+                
+                if unexpected_ancestries:
+                    confidence_text_parts.append("<b>🚨 Unexpected Ancestries Detected:</b>")
+                    for ancestry_type, percentage in unexpected_ancestries.items():
+                        confidence_text_parts.append(f"   • {ancestry_type}: {percentage:.1f}%")
+                else:
+                    confidence_text_parts.append("<b>✅ Global Screening:</b> No unexpected ancestries detected")
             
             # Model quality information
             if best_model:
@@ -1175,16 +1202,30 @@ class AncestryReportGenerator:
             # Quality metrics
             if quality_metrics:
                 total_tested = quality_metrics.get('total_models_tested', 0)
+                global_models = quality_metrics.get('global_screening_models', 0)
+                adaptive_models = quality_metrics.get('adaptive_focused_models', 0)
+                standard_models = quality_metrics.get('standard_models', 0)
                 excellent_fits = quality_metrics.get('excellent_fits', 0)
                 good_fits = quality_metrics.get('good_fits', 0)
+                unexpected_detected = quality_metrics.get('unexpected_ancestries_detected', 0)
                 
                 if total_tested > 0:
-                    confidence_text_parts.append(f"<b>Models Tested:</b> {total_tested}")
+                    confidence_text_parts.append(f"<b>Total Models Tested:</b> {total_tested}")
+                    if global_models > 0:
+                        confidence_text_parts.append(f"<b>Global Screening Models:</b> {global_models}")
+                    if adaptive_models > 0:
+                        confidence_text_parts.append(f"<b>Adaptive Focused Models:</b> {adaptive_models}")
+                    if standard_models > 0:
+                        confidence_text_parts.append(f"<b>Standard Models:</b> {standard_models}")
+                    
                     confidence_text_parts.append(f"<b>Excellent Fits:</b> {excellent_fits}")
                     confidence_text_parts.append(f"<b>Good+ Fits:</b> {good_fits}")
                     
                     success_rate = (good_fits / total_tested) * 100
                     confidence_text_parts.append(f"<b>Success Rate:</b> {success_rate:.1f}%")
+                    
+                    if unexpected_detected > 0:
+                        confidence_text_parts.append(f"<b>🚨 Unexpected Ancestries:</b> {unexpected_detected} detected")
                 
                 if quality_metrics.get('twigstats_enabled', False):
                     confidence_text_parts.append("<b>Enhanced Analysis:</b> Twigstats statistical power enhancement enabled")
