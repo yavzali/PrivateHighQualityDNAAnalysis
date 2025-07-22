@@ -20,6 +20,9 @@ conda install -c conda-forge r-ggplot2 r-dplyr r-tidyr r-readr r-jsonlite
 
 # Install specialized packages
 conda install -c conda-forge r-igraph r-quadprog r-plotly r-viridis r-patchwork r-gridextra
+
+# Install Google Drive streaming packages
+conda install -c conda-forge r-googledrive r-httr
 ```
 
 ### 2. ADMIXTOOLS 2 Installation (GitHub Required)
@@ -75,6 +78,10 @@ remotes::install_github('uqrmaie1/admixtools')
 - `viridis` + `viridisLite` 
 - `patchwork`
 - `gridextra`
+
+### Google Drive Streaming:
+- `googledrive` (for streaming ancient datasets)
+- `httr` (HTTP client for API calls)
 
 ### Statistical:
 - `Matrix`, `MASS`, `nlme` (base R dependencies)

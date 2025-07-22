@@ -34,13 +34,13 @@ This system integrates **every major breakthrough** from 2025 in ancient DNA ana
 - **Machine Learning Quality Control**: Superior contamination detection
 - **Global Coverage**: 250+ populations, 146,000-year time depth
 
-### **💡 Smart Data Access (BREAKTHROUGH):**
-- **🌊 Ultra-Lightweight**: <500MB total with streaming analysis
-- **🌐 No 500GB Downloads**: Cloud-based f2-statistics (~10MB vs 500GB)
-- **📦 Dual Options**: Stream-only OR lightweight panels (500MB vs massive datasets)
-- **🔄 Intelligent Fallbacks**: Automatic substitution for missing populations
-- **⚡ Quick Setup**: 10-minute installation (not hours!)
-- **💾 Storage Choices**: <500MB streaming OR 2GB local (not 500GB!)
+### **💡 Google Drive Streaming (BREAKTHROUGH):**
+- **🌊 Pure Streaming**: <500MB total - no local ancient DNA storage
+- **📡 Google Drive Integration**: Direct access to 15GB ancient datasets
+- **❌ No Fallbacks**: Streaming works or analysis stops (no compromises)
+- **⚡ On-Demand Processing**: Stream only what's needed for each analysis
+- **🔒 Privacy Maintained**: Personal genome stays local, ancient data streamed
+- **💾 Storage Revolution**: <500MB total (not 500GB!)
 
 ### **🎯 vs. Commercial Services:**
 - ✅ **250+ reference populations** (vs ~100 in 23andMe/AncestryDNA)
@@ -128,17 +128,21 @@ cd PrivateHighQualityDNAAnalysis
 bash quick_setup.sh
 ```
 
-#### **🌊 ULTRA-LIGHTWEIGHT (Experimental - <500MB Storage)**
-*Future streaming analysis - not yet fully implemented*
+#### **🌊 GOOGLE DRIVE STREAMING (Active - <500MB Storage)**
+*Pure streaming analysis from Google Drive ancient datasets*
 ```bash
 # Clone the repository
 git clone https://github.com/yavzali/PrivateHighQualityDNAAnalysis.git
 cd PrivateHighQualityDNAAnalysis
 
-# Run ultra-lightweight setup (experimental)
+# Run Google Drive streaming setup
 bash ultra_lightweight_setup.sh
 ```
-**⚠️ Note**: Ultra-lightweight mode uses streaming features that are planned but not yet implemented. It will fall back to standard analysis.
+**📡 Requirements**: 
+- Google Drive account with AncientDNA_Datasets folder
+- Internet connection for streaming
+- No local ancient DNA storage
+- Analysis fails if streaming unavailable (no fallbacks)
 
 ### **Prerequisites:**
 - **🍎 macOS or 🐧 Linux system** (Windows via WSL)

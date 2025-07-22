@@ -1051,18 +1051,18 @@ class AncestryReportGenerator:
             ])
         
         table = Table(table_data, colWidths=[0.6*inch, 2.5*inch, 0.8*inch, 1*inch, 2.5*inch])
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), Color(0.8, 0.8, 0.8)),
-            ('TEXTCOLOR', (0, 0), (-1, 0), black),
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), Color(0.8, 0.8, 0.8)),
+                ('TEXTCOLOR', (0, 0), (-1, 0), black),
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 12),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), Color(0.95, 0.95, 0.95)),
-            ('GRID', (0, 0), (-1, -1), 1, black)
-        ]))
-        
-        story.append(table)
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 12),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                ('BACKGROUND', (0, 1), (-1, -1), Color(0.95, 0.95, 0.95)),
+                ('GRID', (0, 0), (-1, -1), 1, black)
+            ]))
+            
+            story.append(table)
         story.append(Spacer(1, 20))
         
         # Detailed explanation of best model

@@ -1,9 +1,10 @@
 #!/bin/bash
-# 🚀 ULTRA-LIGHTWEIGHT Setup - Under 500MB Total Storage!
-# Revolutionary streaming analysis - No local data storage required!
+# 🌊 GOOGLE DRIVE STREAMING Setup - Pure Streaming Analysis!
+# No local ancient DNA storage - streams everything from Google Drive!
 
-echo "🚀 ULTRA-LIGHTWEIGHT DNA ANALYSIS SETUP 🚀"
-echo "💡 Revolutionary: <500MB total storage + streaming analysis!"
+echo "🌊 GOOGLE DRIVE STREAMING DNA ANALYSIS SETUP 🌊"
+echo "📡 Pure streaming: All ancient DNA datasets accessed from Google Drive!"
+echo "💾 Local storage: <500MB (personal genome only)"
 echo ""
 
 # Platform detection
@@ -16,12 +17,13 @@ else
 fi
 
 echo ""
-echo "🎯 ULTRA-LIGHTWEIGHT FEATURES:"
-echo "   📦 Total storage: <500MB (down from 2GB!)"
-echo "   🌊 Streaming analysis: No local data files"
-echo "   ⚡ Memory-only processing: Ultra-fast"
-echo "   ☁️ Cloud-native: Everything accessed remotely"
-echo "   🔒 Privacy maintained: No personal data stored online"
+echo "🎯 GOOGLE DRIVE STREAMING FEATURES:"
+echo "   📡 Streaming-only: No local ancient DNA datasets"
+echo "   📦 Total storage: <500MB (personal genome + tools only)"
+echo "   🌊 Google Drive integration: Direct dataset access"
+echo "   ⚡ On-demand analysis: Stream only what's needed"
+echo "   🔒 Privacy maintained: Personal genome stays local"
+echo "   ❌ No fallbacks: Streaming works or analysis stops"
 echo ""
 
 # Step 1: Minimal conda installation
@@ -37,16 +39,16 @@ fi
 export PATH="$HOME/miniforge3/bin:$PATH"
 source $HOME/miniforge3/etc/profile.d/conda.sh
 
-# Step 2: Create ultra-minimal environment
-echo "🔬 Step 2: Creating ultra-minimal analysis environment..."
-mamba create -n ultra_dna python=3.11 r-base=4.3.3 -y -c conda-forge
-mamba activate ultra_dna
+# Step 2: Create Google Drive streaming environment
+echo "🔬 Step 2: Creating Google Drive streaming environment..."
+mamba create -n gdrive_streaming python=3.11 r-base=4.3.3 -y -c conda-forge
+mamba activate gdrive_streaming
 
-# Step 3: Install only essential packages (streaming-optimized)
-echo "📚 Step 3: Installing streaming-optimized packages..."
+# Step 3: Install Google Drive streaming packages
+echo "📚 Step 3: Installing Google Drive streaming packages..."
 R --vanilla << 'EOF'
-# Ultra-minimal package set for streaming analysis
-install.packages(c("data.table", "jsonlite", "curl"), repos="https://cran.r-project.org/", dependencies=FALSE)
+# Google Drive streaming package set
+install.packages(c("data.table", "jsonlite", "curl", "googledrive", "httr"), repos="https://cran.r-project.org/", dependencies=FALSE)
 
 # Install minimal admixtools fork (streaming version)
 remotes::install_github("uqrmaie1/admixtools", upgrade = "never", dependencies=FALSE)

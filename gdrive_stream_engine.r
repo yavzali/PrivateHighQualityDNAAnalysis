@@ -2,6 +2,20 @@
 # Streams 15GB ancient datasets from Google Drive without local storage
 # Personal genome analyzed locally, ancient data streamed as needed
 
+# Check for required packages
+required_packages <- c("googledrive", "jsonlite", "data.table", "httr")
+missing_packages <- required_packages[!sapply(required_packages, requireNamespace, quietly = TRUE)]
+
+if (length(missing_packages) > 0) {
+  cat("❌ Missing required packages for Google Drive streaming:\n")
+  for (pkg in missing_packages) {
+    cat("   -", pkg, "\n")
+  }
+  cat("💡 Please install missing packages:\n")
+  cat("   install.packages(c('", paste(missing_packages, collapse = "', '"), "'))\n")
+  stop("Required packages not installed")
+}
+
 library(googledrive)
 library(jsonlite)
 library(data.table)
