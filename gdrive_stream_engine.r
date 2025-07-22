@@ -29,11 +29,19 @@ authenticate_gdrive <- function(force_reauth = FALSE) {
   cat("🔐 Setting up Google Drive authentication...\n")
   
   tryCatch({
+    # Check if credentials file exists
+    credentials_file <- "google_credentials.json"
+    if (!file.exists(credentials_file)) {
+      stop("Google credentials file 'google_credentials.json' not found in current directory")
+    }
+    
+    cat("   📁 Found credentials file:", credentials_file, "\n")
+    
     if (force_reauth || !drive_has_token()) {
+      cat("   🔑 Using OAuth 2.0 client for authentication...\n")
       cat("   🌐 Opening browser for Google authentication...\n")
-      cat("   📝 Please log in and authorize access to your Google Drive\n")
       
-      # Use browser-based authentication (simplest approach)
+      # Use OAuth 2.0 client authentication with browser
       drive_auth(cache = TRUE, use_oob = FALSE)
     }
     
@@ -47,7 +55,7 @@ authenticate_gdrive <- function(force_reauth = FALSE) {
     
   }, error = function(e) {
     cat("   ❌ Authentication failed:", e$message, "\n")
-    cat("   💡 Try running with force_reauth = TRUE\n")
+    cat("   💡 Make sure google_credentials.json is in the current directory\n")
     return(FALSE)
   })
 }

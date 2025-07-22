@@ -92,6 +92,13 @@ debug.log
 streaming_config.json
 ultra_streaming_functions.r
 
+# Google Drive API credentials (CRITICAL - NEVER commit)
+client_secret_*.json
+google_credentials.json
+*.json
+!gdrive_streaming_config.json
+!package.json
+
 # Example files (copyrighted material - never commit)
 Ancestral Brew Example.pdf
 *example*.pdf
