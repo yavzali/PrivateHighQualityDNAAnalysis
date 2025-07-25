@@ -144,7 +144,6 @@ adaptive_population_scaling <- function(population_list, target_ancestry) {
     cat("\n⚠️  PHASE 2: Memory usage too high - scaling down!\n")
     
     # Calculate how many populations to remove
-    memory_per_population <- 0.025  # 25MB per population
     excess_memory <- current_estimated_usage - AGGRESSIVE_LIMIT
     populations_to_remove <- ceiling(excess_memory / memory_per_population)
     
@@ -185,8 +184,8 @@ get_current_memory_usage <- function() {
     } else {
       # Fallback to gc() for memory estimation
       gc_info <- gc()
-      used_memory_kb <- sum(gc_info[, "used"])  # Memory in KB
-      return(used_memory_kb / (1024^2))  # Convert KB to GB
+      used_memory_mb <- sum(gc_info[, "used"] * c(8, 8))  # Rough estimate in MB
+      return(used_memory_mb / 1024)  # Convert to GB
     }
   }, error = function(e) {
     cat("⚠️  Could not measure memory usage, using conservative estimate\n")
@@ -354,10 +353,10 @@ reduce_populations_safely <- function(populations, count_to_remove) {
 }
 
 curate_populations_by_priority <- function(population_list, max_count) {
-  cat("🎯 CURATING POPULATIONS BY PRIORITY (max:", max_count, ")\n")
+  cat("🎯 CURATING POPULATIONS BY PRIORITY WITH HYBRID MATCHING (max:", max_count, ")\n")
   
-  # Use basic population curation for now (hybrid matching will be added later)
-  return(curate_pakistani_populations(population_list))
+  # Use hybrid population matching system for better accuracy
+  return(curate_populations_with_hybrid_matching(population_list, max_count))
 }
 
 curate_pakistani_populations <- function(population_list) {
@@ -1560,7 +1559,7 @@ count_total_populations <- function(results) {
 
 print_ancestry_summary <- function(ancestry_profile) {
   cat("\n🎉 FINAL ANCESTRY ANALYSIS RESULTS\n")
-  cat(paste(rep("=", 50), collapse = ""), "\n")
+  cat("=" %rep% 50, "\n")
   cat("👤 Sample:", ancestry_profile$sample_name, "\n")
   cat("📊 Analysis Method: qpF4ratio (primary) + validation\n")
   cat("🎯 Overall Confidence:", ancestry_profile$analysis_summary$confidence_level, "\n\n")

@@ -851,8 +851,8 @@ class AncestryReportGenerator:
         if ancestry_percentages:
             # Create large, clear percentage display
             story.append(Paragraph("Your Ancient Ancestral Components:", self.section_style))
-        story.append(Spacer(1, 0.2*inch))
-        
+            story.append(Spacer(1, 0.2*inch))
+            
             # Create a clean table showing percentages
             percentage_data = [["Ancient Population", "Your Ancestry %", "Description"]]
             
