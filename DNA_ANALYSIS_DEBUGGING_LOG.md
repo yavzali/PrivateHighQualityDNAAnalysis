@@ -568,3 +568,142 @@ Need to identify what conditions cause the script to use old code paths instead 
 - **Purpose:** Historical reference and learning from past attempts
 
 **CONFIDENCE LEVEL:** Very High - Clean system ready for breakthrough analysis! 
+
+## COMPREHENSIVE FAILURE DOCUMENTATION (APPEND-ONLY)
+
+**Date:** Current session - Post-GitHub commit documentation
+**Status:** 📋 **COMPLETE FAILURE ANALYSIS DOCUMENTED**
+
+### WHAT DIDN'T WORK - COMPREHENSIVE BREAKDOWN:
+
+#### 1. **F2 STATISTICS FUNDAMENTAL LIMITATION** ❌
+**Problem:** Cannot calculate f2 statistics from single individual genome
+**Attempts Made:**
+- Direct f2 extraction from personal genome using `extract_f2()`
+- Using `f2_from_geno()` on personal genome data
+- Including personal genome in ancient reference f2 extraction
+**Results:** All failed with "no informative SNPs" or "0 populations, 0 SNPs"
+**Root Cause:** f2 statistics are between-population metrics; single individual = single population = cannot calculate between-population statistics
+**Status:** **FUNDAMENTAL LIMITATION** - Cannot be overcome with current approach
+
+#### 2. **DATASET MERGING ATTEMPTS** ❌
+**Problem:** ADMIXTOOLS 2 cannot merge personal genome with ancient reference
+**Attempts Made:**
+- PLINK merging before ADMIXTOOLS 2 processing
+- EIGENSTRAT format conversion and merging
+- Direct genotype file combination
+**Results:** All failed due to format incompatibilities, memory limits, or ADMIXTOOLS 2 restrictions
+**Root Cause:** ADMIXTOOLS 2 explicitly states it cannot merge datasets
+**Status:** **SOFTWARE LIMITATION** - Cannot be overcome with ADMIXTOOLS 2
+
+#### 3. **MEMORY OPTIMIZATION FAILURES** ❌
+**Problem:** Even reduced population sets require >24GB RAM
+**Attempts Made:**
+- Reduced from 4,302 to 120 populations
+- Reduced to 21 populations (essential only)
+- Dynamic memory allocation with `maxmem` parameter
+- Tiered population selection (global → regional → local)
+**Results:** Still hitting "vector memory limit of 24.0 Gb reached"
+**Evidence:** User outputs show 42GB/22GB memory needed even with minimal populations
+**Status:** **HARDWARE LIMITATION** - 24GB MacBook insufficient for meaningful analysis
+
+#### 4. **PROXY-BASED ANALYSIS FAILURES** ❌
+**Problem:** Cannot use ancient populations as proxies for personal genome
+**Attempts Made:**
+- Using `Pakistan_SaiduSharif_H_contam_lc.AG` as proxy for "Zehra_Raza"
+- Multiple ancient Pakistani populations as potential proxies
+- Flag-based proxy mode in qpAdm calls
+**Results:** All failed with "Target population not found: Zehra_Raza"
+**Root Cause:** qpAdm still looks for personal genome in f2 statistics, not proxy populations
+**Status:** **IMPLEMENTATION FAILURE** - Proxy concept doesn't work with qpAdm architecture
+
+#### 5. **DIRECT GENOTYPE MODE FAILURES** ❌
+**Problem:** Cannot use personal genome directly with ancient populations
+**Attempts Made:**
+- Passing personal genome as `genotype_prefix` to qpAdm
+- Using separate genotype files for personal and ancient data
+- Modified qpAdm parameters to accept multiple genotype sources
+**Results:** Failed with "Populations missing from indfile"
+**Root Cause:** qpAdm expects all populations (target, sources, outgroups) in same dataset
+**Status:** **ARCHITECTURE LIMITATION** - qpAdm design doesn't support separate datasets
+
+#### 6. **PARAMETER AND FUNCTION MISMATCHES** ❌
+**Problem:** Incorrect parameter usage in ADMIXTOOLS 2 functions
+**Attempts Made:**
+- Using `maxmiss` and `minmaf` in qpAdm calls
+- Incorrect `extract_f2` parameter order
+- Wrong function names (`download_file_from_gdrive` vs `drive_download`)
+**Results:** Function errors and parameter rejection
+**Root Cause:** ADMIXTOOLS 2 documentation inconsistencies and parameter changes
+**Status:** **RESOLVED** - Fixed through systematic debugging
+
+#### 7. **POPULATION SELECTION ISSUES** ❌
+**Problem:** Selected populations not compatible with personal genome SNPs
+**Attempts Made:**
+- Global coverage-based selection (1,500+ populations)
+- Regional focus (South Asia, Central Asia, Middle East)
+- Coverage-based filtering (high-coverage populations only)
+**Results:** "No SNPs remain! Select fewer populations, in particular fewer populations with low coverage!"
+**Root Cause:** Personal genome (635K SNPs) has limited overlap with ancient reference (1.2M SNPs)
+**Status:** **DATA COMPATIBILITY ISSUE** - SNP overlap limitations
+
+### WHAT WORKED (PARTIAL SUCCESSES):
+
+#### ✅ **ANCIENT REFERENCE F2 EXTRACTION**
+- Successfully extracted f2 statistics from ancient reference (17-21 populations)
+- Memory optimization working (18-21GB usage)
+- Google Drive streaming functional
+- Population selection algorithms working
+
+#### ✅ **PERSONAL GENOME PROCESSING**
+- 23andMe to PLINK conversion successful
+- Personal genome file validation (Zehra_Raza.bed/bim/fam)
+- SNP count: 635K SNPs in personal genome
+
+#### ✅ **SYSTEM INFRASTRUCTURE**
+- Google Drive authentication and streaming
+- Memory management and optimization
+- Population selection and filtering
+- File format conversions
+
+### CURRENT BLOCKING ISSUES:
+
+1. **FUNDAMENTAL LIMITATION:** Single individual cannot generate f2 statistics
+2. **SOFTWARE LIMITATION:** ADMIXTOOLS 2 cannot merge datasets
+3. **ARCHITECTURE LIMITATION:** qpAdm requires all populations in same dataset
+4. **HARDWARE LIMITATION:** 24GB RAM insufficient for meaningful population sets
+5. **DATA COMPATIBILITY:** Limited SNP overlap between personal and ancient genomes
+
+### WHAT NEEDS TO BE SOLVED:
+
+**The core challenge:** How to analyze a single personal genome against ancient reference populations when:
+- Personal genome cannot generate f2 statistics (single individual limitation)
+- Personal genome cannot be merged with ancient reference (ADMIXTOOLS 2 limitation)
+- qpAdm requires target to exist in f2 statistics with sources/outgroups (architecture limitation)
+- Available memory (24GB) insufficient for large population sets (hardware limitation)
+
+### POTENTIAL SOLUTION DIRECTIONS:
+
+1. **Alternative Tools:** Tools designed for single individual + ancient reference analysis
+2. **Different Statistical Methods:** Approaches that don't require f2 statistics
+3. **External Dataset Merging:** Pre-processing to combine datasets before ADMIXTOOLS 2
+4. **Alternative Workflows:** Different ancestry analysis pipelines for personal genomes
+5. **Cloud Computing:** Offload memory-intensive operations to cloud resources
+
+### EVIDENCE OF FAILURES:
+
+- **User Output Logs:** All 5+ failure modes documented with specific error messages
+- **Memory Usage Data:** 42GB/22GB requirements documented
+- **Function Errors:** Parameter mismatches and function call failures
+- **Population Selection Issues:** "No SNPs remain" errors with various population sets
+- **Archived Failed Scripts:** `archive/failed_approaches/production_ancestry_system_FAILED.r`
+
+### LESSONS LEARNED:
+
+1. **ADMIXTOOLS 2 Limitations:** Not designed for single individual analysis
+2. **Memory Constraints:** 24GB insufficient for comprehensive ancient DNA analysis
+3. **Dataset Isolation:** Fundamental barrier to combining personal and ancient data
+4. **Statistical Requirements:** f2 statistics require multiple populations
+5. **Tool Architecture:** qpAdm design doesn't support separate target and reference datasets
+
+**CONFIDENCE LEVEL:** Complete understanding of what doesn't work. Ready for innovative solution approach. 
