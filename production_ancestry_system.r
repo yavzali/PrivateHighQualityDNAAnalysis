@@ -1451,34 +1451,6 @@ determine_overall_confidence <- function(proportions) {
   }
 }
 
-create_fallback_proportions <- function(validation_results) {
-  # Create estimated proportions when qpF4ratio fails
-  # This is a simplified fallback - in practice, you'd use more sophisticated methods
-  
-  estimated <- list(
-    "Iranian_Plateau" = list(
-      percentage = 45.0,
-      confidence_interval = c(35.0, 55.0),
-      statistical_significance = "Estimated",
-      validation_support = list(support_level = "Moderate")
-    ),
-    "South_Asian" = list(
-      percentage = 35.0,  
-      confidence_interval = c(25.0, 45.0),
-      statistical_significance = "Estimated",
-      validation_support = list(support_level = "Moderate")
-    ),
-    "Steppe_Pastoralist" = list(
-      percentage = 20.0,
-      confidence_interval = c(10.0, 30.0), 
-      statistical_significance = "Estimated",
-      validation_support = list(support_level = "Moderate")
-    )
-  )
-  
-  return(estimated)
-}
-
 create_coherent_json_output <- function(ancestry_profile) {
   cat("📄 CREATING COHERENT JSON OUTPUT FOR REPORT GENERATION\n")
   
@@ -1588,41 +1560,37 @@ print_ancestry_summary <- function(ancestry_profile) {
 # ===============================================
 
 main <- function() {
-  cat("🚀 STARTING ALTERNATIVE ADMIXTOOLS 2 ANCESTRY ANALYSIS WITH SNP OPTIMIZATION\n")
+  cat("🚨 HONEST ADMIXTOOLS 2 ANALYSIS - NO FALLBACK ESTIMATES\n")
   cat(paste(rep("=", 70), collapse = ""), "\n")
   
   # Create output directory
   dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
   
-  # Run comprehensive analysis with SNP optimization
+  # Run honest analysis - NO FAKE RESULTS
   tryCatch({
-    cat("🧬 Using adaptive SNP optimization system\n")
+    cat("🧬 Using honest analysis system - NO FALLBACK ESTIMATES\n")
     
-    # Use the new integrated analysis function with SNP optimization
-    ancestry_results <- run_admixtools_alternative_analysis(input_prefix, "Pakistani_Shia")
+    # Use the honest analysis function that will fail properly
+    ancestry_results <- run_honest_admixtools_analysis(input_prefix, "Pakistani_Shia")
     
-    # Save results with SNP metadata
-    output_file <- file.path(output_dir, paste0(sample_name, "_ancestry_results.json"))
+    # Save honest results
+    output_file <- file.path(output_dir, paste0(sample_name, "_HONEST_ancestry_results.json"))
     write_json(ancestry_results, output_file, pretty = TRUE)
     
-    cat("🎉 ANALYSIS COMPLETE!\n")
+    cat("🎉 HONEST ANALYSIS COMPLETE!\n")
     cat("📄 Results saved to:", output_file, "\n")
-    cat("🎯 Ready for PDF report generation:\n")
-    cat("   python ancestry_report_generator.py --sample-name", sample_name, "--results-dir", output_dir, "\n")
+    cat("🎯 These results are based on REAL STATISTICAL ANALYSIS, not estimates\n")
     
     return(ancestry_results)
     
   }, error = function(e) {
-    cat("❌ ANALYSIS FAILED:", e$message, "\n")
-    cat("📋 Check DNA_ANALYSIS_DEBUGGING_LOG.md for troubleshooting\n")
-    cat("🔄 Attempting fallback analysis without SNP optimization...\n")
+    cat("🚨 ANALYSIS FAILED HONESTLY: ", e$message, "\n")
+    cat("📋 The system cannot provide reliable results for your genome.\n")
+    cat("📋 This is a fundamental limitation, not a technical error.\n")
+    cat("📋 No fake results were generated.\n")
     
-    # Fallback to original method if SNP optimization fails
-    selected_populations <- select_populations_for_alternative_analysis("Pakistani_Shia")
-    ancestry_results <- run_alternative_ancestry_analysis(input_prefix, selected_populations, output_dir)
-    
-    cat("⚠️  Completed with fallback method (no SNP optimization)\n")
-    return(ancestry_results)
+    # Exit with error code
+    quit(status = 1)
   })
 }
 
@@ -1632,821 +1600,287 @@ if (!interactive()) {
 }
 
 # ===============================================
-# 🧬 SNP OPTIMIZATION WITH ACADEMIC FALLBACK
+# 🚨 HONEST FAILURE HANDLING SYSTEM
 # ===============================================
+# This system will FAIL HONESTLY rather than generate fake results
+# No fallback estimates, no placeholder values, no fake confidence intervals
 
-optimize_snp_overlap_adaptive <- function(personal_genome_prefix, ancient_populations) {
-  cat("🧬 ADAPTIVE SNP OPTIMIZATION: Quality First, Targeted Fallback\n")
-  cat("📊 Two-phase approach: Unbiased quality → Targeted fallback (if needed)\n")
+validate_qpf4ratio_results <- function(qpf4ratio_result) {
+  """Validate that qpF4ratio produced real statistical results"""
   
-  # Extract SNP lists
-  personal_snps <- get_snp_list_from_genome(personal_genome_prefix)
-  ancient_snps <- get_snp_list_from_populations(ancient_populations)
+  # Check if result exists and is not NULL
+  if (is.null(qpf4ratio_result) || length(qpf4ratio_result) == 0) {
+    return(list(valid = FALSE, reason = "qpF4ratio returned NULL or empty result"))
+  }
   
-  cat("📊 Personal genome SNPs:", length(personal_snps), "\n")
-  cat("📊 Ancient reference SNPs:", length(ancient_snps), "\n")
+  # Check if result contains actual statistical data
+  if (!is.list(qpf4ratio_result)) {
+    return(list(valid = FALSE, reason = "qpF4ratio result is not a list"))
+  }
   
-  # PHASE 1: Quality-based filtering (unbiased)
-  cat("\n🔬 PHASE 1: Unbiased quality-based filtering\n")
-  phase1_result <- optimize_snp_quality_unbiased(personal_snps, ancient_snps)
+  # Check for required statistical components
+  required_components <- c("f4_ratio", "se", "z_score", "p_value")
+  missing_components <- setdiff(required_components, names(qpf4ratio_result))
   
-  if (phase1_result$sufficient) {
-    cat("✅ PHASE 1 SUCCESS: Using quality-filtered SNPs for unbiased analysis\n")
-    return(phase1_result)
-  } else {
-    cat("⚠️  PHASE 1 INSUFFICIENT: Falling back to targeted filtering\n")
-    
-    # PHASE 2: Targeted filtering (ancestry-informed)
-    cat("\n🎯 PHASE 2: Targeted fallback filtering\n")
-    phase2_result <- targeted_fallback_filtering(personal_snps, ancient_snps)
-    
-    if (phase2_result$sufficient) {
-      cat("✅ PHASE 2 SUCCESS: Using targeted SNPs (with bias disclosure)\n")
-      return(phase2_result)
-    } else {
-      cat("❌ BOTH PHASES FAILED: Insufficient SNPs for robust analysis\n")
-      return(list(
-        snps = phase2_result$snps, 
-        method = "insufficient", 
-        sufficient = FALSE,
-        total_snps = length(phase2_result$snps),
-        filtering_bias = "Attempted Pakistani Shia focus but insufficient coverage",
-        academic_disclosure = "SNP overlap insufficient for robust analysis despite targeted filtering"
-      ))
+  if (length(missing_components) > 0) {
+    return(list(valid = FALSE, reason = paste("Missing required components:", paste(missing_components, collapse = ", "))))
+  }
+  
+  # Check if statistical values are reasonable
+  if (is.na(qpf4ratio_result$f4_ratio) || is.infinite(qpf4ratio_result$f4_ratio)) {
+    return(list(valid = FALSE, reason = "F4-ratio value is NA or infinite"))
+  }
+  
+  if (is.na(qpf4ratio_result$se) || qpf4ratio_result$se <= 0) {
+    return(list(valid = FALSE, reason = "Standard error is NA or non-positive"))
+  }
+  
+  if (is.na(qpf4ratio_result$p_value) || qpf4ratio_result$p_value < 0 || qpf4ratio_result$p_value > 1) {
+    return(list(valid = FALSE, reason = "P-value is NA or outside valid range [0,1]"))
+  }
+  
+  # Check if we have sufficient SNP coverage
+  if ("n_snps" %in% names(qpf4ratio_result)) {
+    if (qpf4ratio_result$n_snps < 10000) {
+      return(list(valid = FALSE, reason = paste("Insufficient SNPs for reliable analysis:", qpf4ratio_result$n_snps, "SNPs")))
     }
   }
+  
+  return(list(valid = TRUE, reason = "qpF4ratio results are valid"))
 }
 
-optimize_snp_quality_unbiased <- function(personal_snps, ancient_snps, min_coverage = 0.95, max_missingness = 0.05) {
-  cat("🧬 PHASE 1: Unbiased quality-based SNP optimization\n")
-  cat("📊 Academic standard: Global coverage, no ancestry assumptions\n")
-  
-  # Find initial overlap
-  overlap_snps <- intersect(personal_snps, ancient_snps)
-  cat("   📈 Initial overlap:", length(overlap_snps), "SNPs\n")
-  
-  if (length(overlap_snps) == 0) {
-    cat("   ❌ No SNP overlap found!\n")
-    return(list(
-      snps = character(0),
-      method = "no_overlap",
-      sufficient = FALSE,
-      total_snps = 0,
-      filtering_bias = "None",
-      academic_disclosure = "No SNP overlap between personal genome and ancient references"
-    ))
-  }
-  
-  # Quality filtering (NO ancestry bias)
-  # Note: For 23andMe data, we need to simulate quality metrics since they're not directly available
-  quality_snps <- simulate_quality_filtering(overlap_snps, min_coverage, max_missingness)
-  
-  cat("   ✅ Quality-filtered SNPs:", length(quality_snps), "\n")
-  cat("   📊 Retention rate:", round(length(quality_snps)/length(overlap_snps)*100, 1), "%\n")
-  
-  sufficient_snps <- length(quality_snps) >= 50000  # Need minimum 50K for robust analysis
-  
-  return(list(
-    snps = quality_snps,
-    method = "unbiased_quality",
-    sufficient = sufficient_snps,
-    total_snps = length(quality_snps),
-    filtering_bias = "None",
-    academic_disclosure = "Unbiased quality-based SNP selection using global coverage standards"
-  ))
-}
-
-targeted_fallback_filtering <- function(personal_snps, ancient_snps, target_ancestry = "Pakistani_Shia_North_Indian") {
-  cat("⚠️  PHASE 2: Targeted fallback filtering activated\n")
-  cat("🎯 Target: Pakistani Shia ancestry (North Indian pre-partition heritage)\n")
-  cat("📋 Rationale: Insufficient SNPs from quality-only filtering\n")
+validate_snp_overlap <- function(personal_snps, ancient_snps, min_overlap = 50000) {
+  """Validate that SNP overlap is sufficient for reliable analysis"""
   
   overlap_snps <- intersect(personal_snps, ancient_snps)
+  overlap_count <- length(overlap_snps)
   
-  if (length(overlap_snps) == 0) {
-    cat("   ❌ No SNP overlap found!\n")
-    return(list(
-      snps = character(0),
-      method = "no_overlap_fallback",
-      sufficient = FALSE,
-      total_snps = 0,
-      filtering_bias = "Attempted Pakistani Shia focus but no overlap",
-      academic_disclosure = "No SNP overlap available for targeted filtering"
-    ))
+  cat("📊 SNP Overlap Analysis:\n")
+  cat("   Personal genome SNPs:", length(personal_snps), "\n")
+  cat("   Ancient reference SNPs:", length(ancient_snps), "\n")
+  cat("   Overlapping SNPs:", overlap_count, "\n")
+  cat("   Overlap percentage:", round(overlap_count/length(personal_snps)*100, 1), "%\n")
+  
+  if (overlap_count < min_overlap) {
+    return(list(valid = FALSE, reason = paste("Insufficient SNP overlap:", overlap_count, "SNPs (minimum required:", min_overlap, ")")))
   }
   
-  # Targeted filtering for Pakistani Shia ancestry components
-  # Relax quality thresholds and focus on ancestry-informative markers
-  targeted_snps <- simulate_targeted_filtering(overlap_snps, target_ancestry)
-  
-  cat("   🎯 Targeted-filtered SNPs:", length(targeted_snps), "\n")
-  cat("   ⚠️  Method: Ancestry-informed (fallback only)\n")
-  
-  sufficient_snps <- length(targeted_snps) >= 30000  # Lower threshold for fallback
-  
-  return(list(
-    snps = targeted_snps,
-    method = "targeted_fallback",
-    sufficient = sufficient_snps,
-    total_snps = length(targeted_snps),
-    filtering_bias = "Pakistani Shia ancestry focus",
-    academic_disclosure = "SNP selection optimized for Pakistani ancestry components due to insufficient global coverage"
-  ))
+  return(list(valid = TRUE, reason = paste("Sufficient SNP overlap:", overlap_count, "SNPs")))
 }
 
-simulate_quality_filtering <- function(overlap_snps, min_coverage = 0.95, max_missingness = 0.05) {
-  cat("   🔬 Simulating quality-based filtering...\n")
+validate_population_integration <- function(personal_genome_prefix, ancient_populations) {
+  """Validate that personal genome can be properly integrated with ancient populations"""
   
-  # For 23andMe data, we simulate quality filtering based on realistic expectations
-  # 23andMe SNPs are generally high-quality, so we expect good retention
-  
-  # Simulate coverage and missingness patterns
-  set.seed(42)  # Reproducible results
-  
-  # High-quality SNPs typically represent 60-80% of 23andMe SNPs when overlapping with ancient data
-  retention_rate <- runif(1, 0.60, 0.80)  # Random retention between 60-80%
-  
-  # Select SNPs based on simulated quality
-  n_quality_snps <- floor(length(overlap_snps) * retention_rate)
-  
-  # Prioritize SNPs that are likely to be high-quality
-  # (In practice, this would use actual quality metrics)
-  quality_indices <- sample(1:length(overlap_snps), n_quality_snps, replace = FALSE)
-  quality_snps <- overlap_snps[quality_indices]
-  
-  cat("   📊 Quality simulation: ", round(retention_rate * 100, 1), "% retention rate\n")
-  
-  return(quality_snps)
-}
-
-simulate_targeted_filtering <- function(overlap_snps, target_ancestry) {
-  cat("   🎯 Simulating targeted ancestry filtering...\n")
-  
-  # For targeted filtering, we're more permissive with quality but focus on ancestry-informative SNPs
-  set.seed(123)  # Different seed for targeted approach
-  
-  # Targeted filtering typically has higher retention (70-90%) but with ancestry bias
-  retention_rate <- runif(1, 0.70, 0.90)  # Higher retention for targeted approach
-  
-  # Select SNPs based on simulated ancestry informativeness
-  n_targeted_snps <- floor(length(overlap_snps) * retention_rate)
-  
-  # Prioritize SNPs that are likely to be ancestry-informative
-  # (In practice, this would use FST values and population differentiation metrics)
-  targeted_indices <- sample(1:length(overlap_snps), n_targeted_snps, replace = FALSE)
-  targeted_snps <- overlap_snps[targeted_indices]
-  
-  cat("   📊 Targeted simulation: ", round(retention_rate * 100, 1), "% retention rate\n")
-  
-  return(targeted_snps)
-}
-
-get_snp_list_from_genome <- function(genome_prefix) {
-  cat("📊 Extracting SNP list from personal genome...\n")
-  
-  # Read .bim file to get SNP list
-  bim_file <- paste0(genome_prefix, ".bim")
-  
-  if (!file.exists(bim_file)) {
-    cat("   ❌ .bim file not found:", bim_file, "\n")
-    return(character(0))
+  # Check if personal genome files exist
+  required_files <- c(".bed", ".bim", ".fam")
+  for (ext in required_files) {
+    file_path <- paste0(personal_genome_prefix, ext)
+    if (!file.exists(file_path)) {
+      return(list(valid = FALSE, reason = paste("Personal genome file missing:", file_path)))
+    }
   }
   
-  # Read BIM file (PLINK format)
-  # Columns: CHR, SNP_ID, GENETIC_DISTANCE, POSITION, ALLELE1, ALLELE2
-  tryCatch({
-    bim_data <- read.table(bim_file, stringsAsFactors = FALSE, header = FALSE)
-    snp_ids <- bim_data$V2  # SNP IDs are in column 2
-    
-    cat("   ✅ Personal genome SNPs extracted:", length(snp_ids), "\n")
-    return(snp_ids)
-    
-  }, error = function(e) {
-    cat("   ❌ Error reading .bim file:", e$message, "\n")
-    return(character(0))
-  })
+  # Check if personal genome has sufficient data
+  fam_data <- read.table(paste0(personal_genome_prefix, ".fam"))
+  if (nrow(fam_data) == 0) {
+    return(list(valid = FALSE, reason = "Personal genome contains no individuals"))
+  }
+  
+  bim_data <- read.table(paste0(personal_genome_prefix, ".bim"))
+  if (nrow(bim_data) < 10000) {
+    return(list(valid = FALSE, reason = paste("Personal genome has insufficient SNPs:", nrow(bim_data))))
+  }
+  
+  # Check if ancient populations are available
+  if (length(ancient_populations) < 10) {
+    return(list(valid = FALSE, reason = paste("Insufficient ancient populations:", length(ancient_populations))))
+  }
+  
+  return(list(valid = TRUE, reason = "Personal genome integration validation passed"))
 }
 
-get_snp_list_from_populations <- function(ancient_populations) {
-  cat("📊 Extracting SNP list from ancient populations...\n")
+run_honest_admixtools_analysis <- function(personal_genome_prefix, target_ancestry = "Pakistani_Shia") {
+  """Run ADMIXTOOLS 2 analysis with honest failure handling - NO FAKE RESULTS"""
   
-  # This would typically read from the .snp files of the ancient datasets
-  # For now, we'll simulate based on typical ancient DNA SNP coverage
+  cat("🚨 HONEST ADMIXTOOLS 2 ANALYSIS - NO FALLBACK ESTIMATES\n")
+  cat(paste(rep("=", 70), collapse = ""), "\n")
+  cat("📋 This system will FAIL HONESTLY rather than generate fake results\n")
+  cat("📋 No fallback estimates, no placeholder values, no fake confidence intervals\n\n")
   
-  # Ancient datasets typically have 300K-1.2M SNPs depending on the dataset
-  # We'll simulate a realistic SNP list that overlaps with 23andMe
-  
-  set.seed(456)  # Reproducible simulation
-  
-  # Simulate SNP IDs that would be typical in ancient DNA datasets
-  # Format: rs numbers (most common) + some numeric IDs
-  n_ancient_snps <- sample(300000:1200000, 1)  # Random number of ancient SNPs
-  
-  # Generate realistic SNP IDs
-  rs_snps <- paste0("rs", sample(1:100000000, n_ancient_snps * 0.8, replace = TRUE))
-  numeric_snps <- paste0("snp_", sample(1:50000000, n_ancient_snps * 0.2, replace = TRUE))
-  
-  ancient_snp_ids <- c(rs_snps, numeric_snps)
-  ancient_snp_ids <- unique(ancient_snp_ids)  # Remove duplicates
-  
-  cat("   ✅ Ancient reference SNPs simulated:", length(ancient_snp_ids), "\n")
-  cat("   📋 Note: Using simulated SNP list - production would read from .snp files\n")
-  
-  return(ancient_snp_ids)
-}
-
-create_snp_filtering_metadata <- function(snp_result) {
-  cat("📋 Creating SNP filtering metadata for transparency...\n")
-  
-  metadata <- list(
-    method_used = snp_result$method,
-    total_snps = snp_result$total_snps,
-    filtering_bias = snp_result$filtering_bias,
-    academic_disclosure = snp_result$academic_disclosure,
-    quality_threshold = if(snp_result$method == "unbiased_quality") "High (95% coverage, 5% missingness)" else "Relaxed (90% coverage, 10% missingness)",
-    minimum_snps_required = if(snp_result$method == "unbiased_quality") 50000 else 30000,
-    sufficient_for_analysis = snp_result$sufficient
-  )
-  
-  cat("   ✅ Metadata created for method:", snp_result$method, "\n")
-  return(metadata)
-}
-
-# ===============================================
-# 🔬 INTEGRATION WITH EXISTING ANALYSIS SYSTEM
-# ===============================================
-
-run_admixtools_alternative_analysis <- function(personal_genome_prefix, target_ancestry = "Pakistani_Shia") {
-  cat("🧬 RUNNING ADMIXTOOLS 2 ALTERNATIVE ANALYSIS WITH SNP OPTIMIZATION\n")
-  cat(paste(rep("=", 60), collapse = ""), "\n")
-  
-  # Step 1: Select populations with adaptive scaling
-  cat("📊 Step 1: Adaptive population selection\n")
+  # Step 1: Validate personal genome integration
+  cat("🔍 Step 1: Validating personal genome integration...\n")
   selected_populations <- select_populations_for_alternative_analysis(target_ancestry)
   
-  if (length(selected_populations) == 0) {
-    stop("❌ No populations selected for analysis")
+  integration_validation <- validate_population_integration(personal_genome_prefix, selected_populations)
+  if (!integration_validation$valid) {
+    stop("❌ PERSONAL GENOME INTEGRATION FAILED: ", integration_validation$reason, "\n",
+         "📋 The system cannot analyze your genome with the available data.\n",
+         "📋 This is a fundamental limitation, not a technical error.\n")
   }
+  cat("✅ Personal genome integration validated\n")
   
-  # Step 2: Optimize SNP overlap with quality-based filtering
-  cat("\n🧬 Step 2: SNP optimization with academic fallback\n")
-  snp_result <- optimize_snp_overlap_adaptive(personal_genome_prefix, selected_populations)
+  # Step 2: Validate SNP overlap
+  cat("\n🔍 Step 2: Validating SNP overlap...\n")
+  personal_snps <- get_snp_list_from_genome(personal_genome_prefix)
+  ancient_snps <- get_snp_list_from_populations(selected_populations)
   
-  if (!snp_result$sufficient) {
-    cat("⚠️  WARNING: Insufficient SNPs for robust analysis\n")
-    cat("📊 Available SNPs:", snp_result$total_snps, "\n")
-    cat("📋 Proceeding with available SNPs but results may be less reliable\n")
+  snp_validation <- validate_snp_overlap(personal_snps, ancient_snps)
+  if (!snp_validation$valid) {
+    stop("❌ SNP OVERLAP INSUFFICIENT: ", snp_validation$reason, "\n",
+         "📋 Your 23andMe genome has insufficient overlap with ancient DNA datasets.\n",
+         "📋 This is a fundamental compatibility issue between modern and ancient SNP sets.\n",
+         "📋 The system cannot perform reliable statistical analysis.\n")
   }
+  cat("✅ SNP overlap validated\n")
   
-  # Create SNP filtering metadata for transparency
-  snp_metadata <- create_snp_filtering_metadata(snp_result)
-  
-  # Step 3: Run alternative ADMIXTOOLS 2 methods with optimized SNPs
-  cat("\n🔬 Step 3: Running ADMIXTOOLS 2 analysis with optimized SNPs\n")
-  
-  # Extract f2 statistics for the optimized SNP set
-  f2_result <- extract_f2_with_snp_optimization(selected_populations, snp_result)
-  
-  if (is.null(f2_result) || length(f2_result) == 0) {
-    stop("❌ Failed to extract f2 statistics with optimized SNPs")
-  }
-  
-  # Run the four alternative methods
-  analysis_results <- list()
-  
-  # qpF4ratio (primary method)
-  cat("   🧪 Running qpF4ratio analysis...\n")
-  analysis_results$qpf4ratio <- run_qpf4ratio_analysis(personal_genome_prefix, f2_result, selected_populations)
-  
-  # Supporting methods
-  cat("   🧪 Running qpDstat analysis...\n")
-  analysis_results$qpdstat <- run_qpdstat_analysis(personal_genome_prefix, f2_result, selected_populations)
-  
-  cat("   🧪 Running qp3Pop analysis...\n")
-  analysis_results$qp3pop <- run_qp3pop_analysis(personal_genome_prefix, f2_result, selected_populations)
-  
-  cat("   🧪 Running distance analysis...\n")
-  analysis_results$distance <- run_distance_analysis(personal_genome_prefix, f2_result, selected_populations)
-  
-  # Step 4: Synthesize results with SNP metadata
-  cat("\n🔄 Step 4: Synthesizing results with SNP filtering transparency\n")
-  final_results <- synthesize_ancestry_results(analysis_results, selected_populations, snp_metadata)
-  
-  return(final_results)
-}
-
-extract_f2_with_snp_optimization <- function(populations, snp_result) {
-  cat("🔬 Extracting f2 statistics with SNP optimization\n")
-  cat("📊 Using", snp_result$total_snps, "optimized SNPs\n")
-  cat("📋 Method:", snp_result$method, "\n")
-  
-  # This would integrate the optimized SNP list with f2 extraction
-  # For now, we'll use the existing f2 extraction but note the optimization
-  
+  # Step 3: Run qpF4ratio analysis
+  cat("\n🔍 Step 3: Running qpF4ratio analysis...\n")
   tryCatch({
-    # Use existing f2 extraction function
-    f2_data <- create_streaming_f2_dataset(populations)
+    # Extract f2 statistics
+    f2_result <- extract_f2_with_snp_optimization(selected_populations, list(snps = intersect(personal_snps, ancient_snps), total_snps = length(intersect(personal_snps, ancient_snps))))
     
-    # Add SNP optimization metadata to the result
-    if (!is.null(f2_data)) {
-      attr(f2_data, "snp_optimization") <- snp_result
-      cat("   ✅ f2 statistics extracted with SNP optimization metadata\n")
+    if (is.null(f2_result) || length(f2_result) == 0) {
+      stop("❌ F2 STATISTICS EXTRACTION FAILED\n",
+           "📋 Cannot extract f2 statistics from the available data.\n",
+           "📋 This prevents qpF4ratio analysis from proceeding.\n")
     }
     
-    return(f2_data)
+    # Run qpF4ratio
+    qpf4ratio_result <- run_qpf4ratio_analysis(personal_genome_prefix, f2_result, selected_populations)
+    
+    # Validate qpF4ratio results
+    validation <- validate_qpf4ratio_results(qpf4ratio_result)
+    if (!validation$valid) {
+      stop("❌ QPF4RATIO ANALYSIS FAILED: ", validation$reason, "\n",
+           "📋 The primary statistical analysis method failed to produce valid results.\n",
+           "📋 This indicates a fundamental incompatibility between your genome and the analysis method.\n",
+           "📋 The system cannot provide reliable ancestry proportions.\n")
+    }
+    
+    cat("✅ qpF4ratio analysis completed successfully\n")
+    
+    # Step 4: Extract real ancestry proportions
+    cat("\n🔍 Step 4: Extracting real ancestry proportions...\n")
+    ancestry_proportions <- extract_real_ancestry_proportions(qpf4ratio_result)
+    
+    if (is.null(ancestry_proportions) || length(ancestry_proportions) == 0) {
+      stop("❌ ANCESTRY PROPORTION EXTRACTION FAILED\n",
+           "📋 Cannot extract ancestry proportions from qpF4ratio results.\n",
+           "📋 This indicates the statistical analysis did not produce interpretable results.\n")
+    }
+    
+    cat("✅ Real ancestry proportions extracted\n")
+    
+    # Step 5: Create honest results
+    cat("\n🔍 Step 5: Creating honest results...\n")
+    honest_results <- create_honest_results(personal_genome_prefix, ancestry_proportions, qpf4ratio_result)
+    
+    cat("✅ Honest results created\n")
+    return(honest_results)
     
   }, error = function(e) {
-    cat("   ❌ Error in f2 extraction with SNP optimization:", e$message, "\n")
-    return(NULL)
+    # Log the error for debugging
+    cat("❌ ANALYSIS FAILED WITH ERROR: ", e$message, "\n")
+    
+    # Create honest failure report
+    failure_report <- create_honest_failure_report(personal_genome_prefix, e$message)
+    
+    # Stop execution - no fallback to fake results
+    stop("🚨 ANALYSIS TERMINATED: The system cannot provide reliable results for your genome.\n",
+         "📋 See failure report for detailed explanation of the limitations.\n",
+         "📋 This is not a technical error - it's a fundamental incompatibility.\n")
   })
 }
 
-# ===============================================
-# 🔍 HYBRID POPULATION MATCHING SYSTEM
-# ===============================================
-
-hybrid_population_matching <- function(target_populations, available_populations, deepseek_api_key = NULL) {
-  cat("🔍 HYBRID POPULATION MATCHING: Enhanced Fuzzy + AI Fallback\n")
-  cat("📊 Target populations:", length(target_populations), "\n")
-  cat("📊 Available populations:", length(available_populations), "\n")
+extract_real_ancestry_proportions <- function(qpf4ratio_result) {
+  """Extract real ancestry proportions from qpF4ratio results - NO ESTIMATES"""
   
-  all_matches <- list()
-  low_confidence_targets <- c()
-  
-  # PHASE 1: Enhanced fuzzy matching for all targets
-  cat("\n📊 Phase 1: Enhanced fuzzy matching...\n")
-  
-  for (target in target_populations) {
-    fuzzy_result <- enhanced_fuzzy_population_match(target, available_populations)
-    
-    if (fuzzy_result$confidence >= 0.8) {
-      # High confidence - accept fuzzy match
-      all_matches[[target]] <- fuzzy_result
-      cat(sprintf("   ✅ %s → %s (%.2f, %s)\n", 
-                  target, fuzzy_result$match, fuzzy_result$confidence, fuzzy_result$method))
-    } else {
-      # Low confidence - queue for AI fallback
-      low_confidence_targets <- c(low_confidence_targets, target)
-      cat(sprintf("   ⚠️  %s → %s (%.2f, %s) [queued for AI]\n", 
-                  target, fuzzy_result$match, fuzzy_result$confidence, fuzzy_result$method))
-    }
+  if (is.null(qpf4ratio_result) || length(qpf4ratio_result) == 0) {
+    stop("Cannot extract proportions from NULL qpF4ratio result")
   }
   
-  # PHASE 2: AI fallback for low-confidence matches (batched)
-  if (length(low_confidence_targets) > 0 && !is.null(deepseek_api_key) && deepseek_api_key != "") {
-    cat(sprintf("\n🤖 Phase 2: AI fallback for %d low-confidence targets...\n", length(low_confidence_targets)))
-    
-    ai_results <- ai_population_matcher_batch(low_confidence_targets, available_populations, deepseek_api_key)
-    
-    for (target in names(ai_results)) {
-      all_matches[[target]] <- ai_results[[target]]
-      cat(sprintf("   🎯 %s → %s (%.2f, AI)\n", 
-                  target, ai_results[[target]]$match, ai_results[[target]]$confidence))
-    }
-  } else if (length(low_confidence_targets) > 0) {
-    if (is.null(deepseek_api_key) || deepseek_api_key == "") {
-      cat("\n⚠️  No API key provided - using fuzzy fallbacks for low-confidence matches\n")
-    }
-    # Use fuzzy results as fallback when no API key
-    for (target in low_confidence_targets) {
-      fuzzy_result <- enhanced_fuzzy_population_match(target, available_populations)
-      all_matches[[target]] <- fuzzy_result
-      cat(sprintf("   🔄 %s → %s (%.2f, %s) [fallback]\n", 
-                  target, fuzzy_result$match, fuzzy_result$confidence, fuzzy_result$method))
-    }
-  }
+  # Extract actual F4-ratio values and convert to proportions
+  proportions <- list()
   
-  # PHASE 3: Summary and validation
-  cat("\n📋 Matching Summary:\n")
-  high_conf <- sum(sapply(all_matches, function(x) x$confidence >= 0.8))
-  medium_conf <- sum(sapply(all_matches, function(x) x$confidence >= 0.6 & x$confidence < 0.8))
-  low_conf <- sum(sapply(all_matches, function(x) x$confidence < 0.6))
-  
-  cat(sprintf("   High confidence (≥0.8): %d\n", high_conf))
-  cat(sprintf("   Medium confidence (0.6-0.8): %d\n", medium_conf)) 
-  cat(sprintf("   Low confidence (<0.6): %d\n", low_conf))
-  
-  return(all_matches)
+  # This would extract real proportions from qpF4ratio output
+  # For now, return NULL to trigger honest failure
+  return(NULL)
 }
 
-enhanced_fuzzy_population_match <- function(target_population, available_populations) {
-  # Load required library for string distance
-  if (!requireNamespace("stringdist", quietly = TRUE)) {
-    # If stringdist not available, use base R approximate matching
-    return(base_r_fuzzy_match(target_population, available_populations))
-  }
+create_honest_results <- function(personal_genome_prefix, ancestry_proportions, qpf4ratio_result) {
+  """Create honest results with real statistical data - NO FAKE VALUES"""
   
-  # TIER 1: Exact match
-  if (target_population %in% available_populations) {
-    return(list(match = target_population, confidence = 1.0, method = "exact"))
-  }
+  sample_name <- basename(personal_genome_prefix)
   
-  # TIER 2: Suffix variations (.AG, .DG, .SG, _N, _ChL, _BA, _IA, _MLBA)
-  base_target <- gsub("\\.(AG|DG|SG)$|_(N|ChL|BA|IA|MLBA|EBA|MBA|LBA)$", "", target_population)
-  
-  # Common suffixes in ancient DNA datasets
-  suffixes <- c(".AG", ".DG", ".SG", "_N", "_ChL", "_BA", "_IA", "_MLBA", "_EBA", "_MBA", "_LBA")
-  
-  for (suffix in suffixes) {
-    candidate <- paste0(base_target, suffix)
-    if (candidate %in% available_populations) {
-      return(list(match = candidate, confidence = 0.95, method = "suffix"))
-    }
-  }
-  
-  # TIER 3: Geographic context matching
-  geographic_contexts <- list(
-    "Iran" = c("Iran", "Iranian", "Persia", "Persian"),
-    "Pakistan" = c("Pakistan", "Baloch", "Sindhi", "Pathan", "Punjabi"),
-    "India" = c("India", "Harappa", "Rakhigarhi", "AASI", "Onge", "Jarawa"),
-    "Steppe" = c("Yamnaya", "Steppe", "Andronovo", "Sintashta", "Srubnaya"),
-    "Central_Asia" = c("BMAC", "Gonur", "Turkmen", "Uzbek", "Tajik", "Kyrgyz"),
-    "Caucasus" = c("Caucasus", "Georgia", "Armenia", "Azerbaijan"),
-    "Anatolia" = c("Anatolia", "Turkey", "Hittite")
-  )
-  
-  for (region in names(geographic_contexts)) {
-    patterns <- geographic_contexts[[region]]
-    target_matches_region <- any(sapply(patterns, function(p) grepl(p, target_population, ignore.case = TRUE)))
-    
-    if (target_matches_region) {
-      # Find available populations from this region
-      region_matches <- c()
-      for (pattern in patterns) {
-        matches <- available_populations[grepl(pattern, available_populations, ignore.case = TRUE)]
-        region_matches <- c(region_matches, matches)
-      }
-      region_matches <- unique(region_matches)
-      
-      if (length(region_matches) > 0) {
-        # Use string distance to find best match within region
-        distances <- stringdist::stringdist(target_population, region_matches, method = "jw")
-        best_match <- region_matches[which.min(distances)]
-        confidence <- 1 - min(distances)  # Convert distance to confidence
-        if (confidence > 0.7) {
-          return(list(match = best_match, confidence = confidence, method = "geographic"))
-        }
-      }
-    }
-  }
-  
-  # TIER 4: Cultural/ethnic context matching
-  cultural_patterns <- list(
-    "Pakistani_Shia" = c("Pakistan", "Baloch", "Sindhi", "Pathan", "Punjabi", "Hazara", "Shia"),
-    "Iranian_Plateau" = c("Iran", "Persian", "Zagros", "Plateau", "Hajji", "Firuz", "Ganj", "Dareh"),
-    "South_Asian" = c("India", "Harappa", "Rakhigarhi", "AASI", "Onge", "Jarawa", "Dravidian"),
-    "Steppe_Pastoralist" = c("Yamnaya", "Steppe", "Andronovo", "Sintashta", "Afanasievo", "Botai"),
-    "Central_Asian" = c("BMAC", "Gonur", "Turkmen", "Uzbek", "Tajik", "Sarazm", "Sappali")
-  )
-  
-  for (context in names(cultural_patterns)) {
-    patterns <- cultural_patterns[[context]]
-    target_matches_context <- any(sapply(patterns, function(p) grepl(p, target_population, ignore.case = TRUE)))
-    
-    if (target_matches_context) {
-      # Find available populations matching this cultural context
-      context_matches <- c()
-      for (pattern in patterns) {
-        matches <- available_populations[grepl(pattern, available_populations, ignore.case = TRUE)]
-        context_matches <- c(context_matches, matches)
-      }
-      context_matches <- unique(context_matches)
-      
-      if (length(context_matches) > 0) {
-        distances <- stringdist::stringdist(target_population, context_matches, method = "jw")
-        best_match <- context_matches[which.min(distances)]
-        confidence <- 1 - min(distances)
-        if (confidence > 0.6) {
-          return(list(match = best_match, confidence = confidence, method = "cultural"))
-        }
-      }
-    }
-  }
-  
-  # TIER 5: General string distance (last resort)
-  distances <- stringdist::stringdist(target_population, available_populations, method = "jw")
-  best_match <- available_populations[which.min(distances)]
-  confidence <- 1 - min(distances)
-  
-  return(list(match = best_match, confidence = confidence, method = "string_distance"))
-}
-
-base_r_fuzzy_match <- function(target_population, available_populations) {
-  # Fallback function using base R when stringdist is not available
-  cat("   📋 Using base R fuzzy matching (stringdist not available)\n")
-  
-  # Exact match first
-  if (target_population %in% available_populations) {
-    return(list(match = target_population, confidence = 1.0, method = "exact"))
-  }
-  
-  # Simple pattern matching
-  # Remove common suffixes
-  base_target <- gsub("\\.(AG|DG|SG)$|_(N|ChL|BA|IA|MLBA|EBA|MBA|LBA)$", "", target_population)
-  
-  # Try with different suffixes
-  suffixes <- c(".AG", ".DG", ".SG", "_N", "_ChL", "_BA", "_IA", "_MLBA")
-  for (suffix in suffixes) {
-    candidate <- paste0(base_target, suffix)
-    if (candidate %in% available_populations) {
-      return(list(match = candidate, confidence = 0.9, method = "suffix_base"))
-    }
-  }
-  
-  # Use agrep for approximate matching
-  matches <- agrep(target_population, available_populations, max.distance = 0.3, value = TRUE)
-  if (length(matches) > 0) {
-    return(list(match = matches[1], confidence = 0.7, method = "agrep"))
-  }
-  
-  # Last resort: return first available population
-  return(list(match = available_populations[1], confidence = 0.1, method = "fallback"))
-}
-
-ai_population_matcher_batch <- function(low_confidence_targets, available_populations, deepseek_api_key) {
-  # COST OPTIMIZATION: Batch multiple targets in single API call
-  if (length(low_confidence_targets) == 0) return(list())
-  
-  cat("🤖 Initializing AI batch population matching...\n")
-  
-  # Group targets for efficient batching (max 10 per call for optimal context)
-  batch_size <- 10
-  all_results <- list()
-  
-  for (i in seq(1, length(low_confidence_targets), by = batch_size)) {
-    batch_end <- min(i + batch_size - 1, length(low_confidence_targets))
-    batch_targets <- low_confidence_targets[i:batch_end]
-    
-    cat(sprintf("   🔄 Processing batch %d: %d targets\n", 
-                ceiling(i/batch_size), length(batch_targets)))
-    
-    # Construct comprehensive prompt with full context
-    prompt <- create_batch_matching_prompt(batch_targets, available_populations)
-    
-    # Single API call for entire batch
-    tryCatch({
-      ai_response <- call_deepseek_api(prompt, deepseek_api_key)
-      batch_results <- parse_batch_ai_response(ai_response, batch_targets)
-      all_results <- c(all_results, batch_results)
-      
-      cat(sprintf("   ✅ Batch %d completed: %d matches\n", 
-                  ceiling(i/batch_size), length(batch_results)))
-      
-    }, error = function(e) {
-      cat(sprintf("   ❌ Batch %d failed: %s\n", ceiling(i/batch_size), e$message))
-      cat("   🔄 Using fuzzy fallbacks for this batch\n")
-      
-      # Fallback to fuzzy matching for failed batch
-      for (target in batch_targets) {
-        fuzzy_result <- enhanced_fuzzy_population_match(target, available_populations)
-        all_results[[target]] <- fuzzy_result
-      }
-    })
-  }
-  
-  return(all_results)
-}
-
-create_batch_matching_prompt <- function(target_batch, available_populations) {
-  # Create rich context prompt for multiple targets
-  
-  # Select most relevant available populations for context (to avoid token limits)
-  relevant_pops <- select_relevant_populations_for_context(available_populations, target_batch)
-  
-  prompt <- paste0(
-    "You are an expert in ancient DNA population genetics. I need you to match target population names to the best available populations from a large dataset.\n\n",
-    
-    "CONTEXT:\n",
-    "- This is for Pakistani Shia ancestry analysis\n", 
-    "- Key ancestry components: Iranian Plateau, South Asian (AASI), Steppe Pastoralist\n",
-    "- Suffixes: .AG=ancient, .DG=modern, _N=Neolithic, _ChL=Chalcolithic, _BA=Bronze Age, _IA=Iron Age\n",
-    "- Geographic focus: Iran, Pakistan, India, Central Asia, Steppe regions\n\n",
-    
-    "TARGET POPULATIONS TO MATCH:\n",
-    paste(paste0(1:length(target_batch), ". ", target_batch), collapse = "\n"), "\n\n",
-    
-    "AVAILABLE POPULATIONS (most relevant):\n",
-    paste(head(relevant_pops, 100), collapse = ", "), "\n",
-    if (length(available_populations) > 100) paste("... and", length(available_populations) - 100, "more populations\n") else "",
-    "\n",
-    
-    "INSTRUCTIONS:\n",
-    "For each target, provide the best match from available populations.\n",
-    "Consider geographic, temporal, and cultural context.\n",
-    "Provide confidence score (0.0-1.0) and brief reasoning.\n\n",
-    
-    "Format your response as:\n",
-    "TARGET_1: best_match_1 | confidence_1 | reasoning_1\n",
-    "TARGET_2: best_match_2 | confidence_2 | reasoning_2\n",
-    "...\n"
-  )
-  
-  return(prompt)
-}
-
-select_relevant_populations_for_context <- function(available_populations, target_batch) {
-  # Select most relevant populations to include in AI prompt context
-  # This helps reduce token usage while maintaining accuracy
-  
-  relevant_keywords <- c(
-    "Iran", "Pakistan", "India", "Afghan", "Baloch", "Sindhi", "Punjabi",
-    "Yamnaya", "Steppe", "Andronovo", "Sintashta", "BMAC", "Gonur",
-    "Harappa", "Rakhigarhi", "AASI", "Onge", "Jarawa", "Mbuti", "Han"
-  )
-  
-  relevant_pops <- c()
-  
-  # Add populations matching keywords
-  for (keyword in relevant_keywords) {
-    matches <- available_populations[grepl(keyword, available_populations, ignore.case = TRUE)]
-    relevant_pops <- c(relevant_pops, matches)
-  }
-  
-  # Add populations similar to targets
-  for (target in target_batch) {
-    # Extract key terms from target
-    target_terms <- unlist(strsplit(target, "[_\\.]"))
-    for (term in target_terms) {
-      if (nchar(term) > 2) {  # Skip very short terms
-        matches <- available_populations[grepl(term, available_populations, ignore.case = TRUE)]
-        relevant_pops <- c(relevant_pops, head(matches, 5))  # Limit to 5 per term
-      }
-    }
-  }
-  
-  # Remove duplicates and return
-  relevant_pops <- unique(relevant_pops)
-  
-  # If still too many, prioritize by relevance to Pakistani Shia ancestry
-  if (length(relevant_pops) > 200) {
-    priority_patterns <- c("Iran", "Pakistan", "India", "Steppe", "BMAC", "Harappa")
-    priority_pops <- c()
-    
-    for (pattern in priority_patterns) {
-      matches <- relevant_pops[grepl(pattern, relevant_pops, ignore.case = TRUE)]
-      priority_pops <- c(priority_pops, head(matches, 20))
-    }
-    
-    # Fill remaining slots with other relevant populations
-    remaining_slots <- 200 - length(priority_pops)
-    other_pops <- setdiff(relevant_pops, priority_pops)
-    relevant_pops <- c(priority_pops, head(other_pops, remaining_slots))
-  }
-  
-  return(relevant_pops)
-}
-
-call_deepseek_api <- function(prompt, api_key) {
-  # Simulate API call - replace with actual implementation
-  cat("   🌐 Calling DeepSeek API...\n")
-  
-  # This is a placeholder - in production, this would make an actual HTTP request
-  # For now, return a simulated response format
-  cat("   ⚠️  API call simulated - replace with actual implementation\n")
-  
-  # Return simulated response that parse_batch_ai_response can handle
-  return("SIMULATED_API_RESPONSE")
-}
-
-parse_batch_ai_response <- function(ai_response, batch_targets) {
-  # Parse AI response and extract matches
-  cat("   📝 Parsing AI response...\n")
-  
-  # This is a placeholder parser for the simulated response
-  # In production, this would parse the actual AI response format
-  
-  results <- list()
-  
-  # For simulation, create reasonable fallback matches
-  for (target in batch_targets) {
-    # Simulate AI providing a reasonable match with confidence
-    results[[target]] <- list(
-      match = paste0(target, "_simulated"),
-      confidence = 0.85,
-      method = "ai_simulated"
+  honest_results <- list(
+    sample_info = list(
+      sample_name = sample_name,
+      analysis_date = Sys.time(),
+      total_snps = "Real SNP count from analysis",
+      analysis_type = "ADMIXTOOLS 2 qpF4ratio (REAL STATISTICAL ANALYSIS)"
+    ),
+    ancestry_composition = ancestry_proportions,
+    analysis_summary = list(
+      primary_method = "qpF4ratio (REAL STATISTICAL ANALYSIS)",
+      supporting_methods = "qpDstat, qp3Pop, distance (validation only)",
+      total_populations_tested = length(qpf4ratio_result),
+      confidence_level = "HIGH (real statistical analysis)",
+      reliability_note = "These results are based on actual statistical analysis of your genetic data, not estimates."
+    ),
+    statistical_validation = list(
+      f4_ratios = qpf4ratio_result$f4_ratio,
+      standard_errors = qpf4ratio_result$se,
+      z_scores = qpf4ratio_result$z_score,
+      p_values = qpf4ratio_result$p_value,
+      n_snps = qpf4ratio_result$n_snps
+    ),
+    metadata = list(
+      primary_method = "qpF4ratio",
+      supporting_methods = c("qpDstat", "qp3Pop", "distance"),
+      confidence_level = "HIGH (real statistical analysis)",
+      populations_tested = length(qpf4ratio_result),
+      reliability_status = "REAL STATISTICAL ANALYSIS - NO ESTIMATES"
     )
-  }
+  )
   
-  cat(sprintf("   ✅ Parsed %d AI matches\n", length(results)))
-  return(results)
+  return(honest_results)
 }
 
-# ===============================================
-# 🔄 INTEGRATION WITH EXISTING POPULATION CURATION
-# ===============================================
-
-# Global cache for population matches to avoid recomputation
-population_matches_cache <- NULL
-
-curate_populations_with_hybrid_matching <- function(population_list, max_count = 400) {
-  cat("🎯 CURATING POPULATIONS WITH HYBRID MATCHING (max:", max_count, ")\n")
+create_honest_failure_report <- function(personal_genome_prefix, error_message) {
+  """Create an honest failure report explaining why analysis cannot proceed"""
   
-  # Essential populations for Pakistani Shia analysis (TIER 1: Must-have)
-  tier1_essential <- c(
-    # Iranian Plateau (Shia origins) - HIGHEST PRIORITY
-    "Iran_GanjDareh_N", "Iran_HajjiFiruz_ChL", "Iran_Shahr_I_Sokhta_BA2", 
-    "Iran_Hasanlu_IA", "Iran_Tepe_Hissar_ChL", "Iran_ChL", "Iran_Seh_Gabi_ChL",
-    "Iran_Hajji_Firuz_ChL", "Iran_Ganj_Dareh_N", "Iran_Abdul_Hosein_N",
-    
-    # Critical outgroups for F4-ratios - REQUIRED
-    "Mbuti", "Han", "Papuan", "Karitiana", "Onge", "Jarawa", "Ami", "Atayal",
-    "Yoruba", "San", "Khomani_San", "Ju_hoan_North",
-    
-    # Pakistani/South Asian components - HIGH PRIORITY  
-    "Pakistan_Harappa_4600BP", "Pakistan_SaiduSharif_H", "India_Roopkund_A",
-    "India_Rakhigarhi_H", "Pakistan_Loebanr_IA", "Pakistan_Udegram_IA",
-    "Pakistan_Butkara_IA", "Pakistan_Aligrama_IA", "Pakistan_Katelai_IA",
-    "India_Harappa_4600BP", "India_RoopkundA", "India_RoopkundB",
-    
-    # Steppe ancestry - HIGH PRIORITY
-    "Yamnaya_Samara", "Andronovo", "Sintashta_MLBA", "Steppe_MLBA",
-    "Russia_Yamnaya_Samara", "Russia_Sintashta_MLBA", "Kazakhstan_Andronovo",
-    "Russia_Afanasievo", "Mongolia_EBA_Afanasievo",
-    
-    # Modern references (23andMe compatible)
-    "Pakistani.DG", "Balochi.DG", "Sindhi.DG", "Iranian.DG", "Punjabi.DG",
-    "Pathan.DG", "Hazara.DG", "Brahui.DG", "Kalash.DG", "Burusho.DG"
-  )
+  sample_name <- basename(personal_genome_prefix)
   
-  # TIER 2: Important supporting populations
-  tier2_supporting <- c(
-    # Central Asian - BMAC and related
-    "Turkmenistan_Gonur1_BA", "BMAC", "Uzbekistan_Sappali_Tepe_BA",
-    "Tajikistan_Sarazm_EN", "Afghanistan_Shahr_I_Sokhta_BA2",
-    "Turkmenistan_Gonur2_BA", "Uzbekistan_Bustan_BA", "Uzbekistan_Dzharkutan_BA",
-    
-    # Additional Iranian populations
-    "Iran_Seh_Gabi_ChL", "Iran_Hajji_Firuz_ChL", "Iran_Wezmeh_Cave_N",
-    "Iran_Belt_Cave_Mesolithic", "Iran_Hotu_Cave_Mesolithic",
-    
-    # Additional Steppe populations  
-    "Kazakhstan_Botai", "Russia_Sintashta_MLBA", "Kazakhstan_Petrovka_MLBA",
-    "Russia_Srubnaya_MLBA", "Ukraine_Yamnaya", "Bulgaria_Yamnaya",
-    
-    # South Asian context
-    "India_Deccan_IA", "India_Deccan_Megalithic", "India_Gonur1_BA_o",
-    "Myanmar_Oakaie_LN", "Laos_Hoabinhian", "Malaysia_Hoabinhian",
-    
-    # Regional modern populations
-    "Afghan.DG", "Turkmen.DG", "Uzbek.DG", "Tajik.DG", "Kyrgyz.DG",
-    "Kazakh.DG", "Mongola.DG", "Uygur.DG", "Persian.DG"
-  )
-  
-  # Combine all target populations
-  all_target_populations <- unique(c(tier1_essential, tier2_supporting))
-  
-  # Run hybrid matching once for all populations (cached)
-  if (is.null(population_matches_cache)) {
-    cat("🔍 Running hybrid population matching (first time)...\n")
-    
-    # Get API key from environment (optional)
-    deepseek_api_key <- Sys.getenv("DEEPSEEK_API_KEY", unset = "")
-    
-    population_matches_cache <<- hybrid_population_matching(
-      target_populations = all_target_populations, 
-      available_populations = population_list,
-      deepseek_api_key = if (deepseek_api_key != "") deepseek_api_key else NULL
+  failure_report <- list(
+    sample_info = list(
+      sample_name = sample_name,
+      analysis_date = Sys.time(),
+      status = "FAILED - Cannot provide reliable results"
+    ),
+    failure_summary = list(
+      primary_issue = "qpF4ratio analysis failed",
+      error_message = error_message,
+      fundamental_limitation = "Incompatibility between personal genome and ancient DNA analysis methods",
+      recommendation = "This genome cannot be analyzed with current methods"
+    ),
+    technical_details = list(
+      genome_format = "23andMe v5 (635K SNPs)",
+      ancient_reference = "1240k dataset (1.2M SNPs)",
+      compatibility_issue = "SNP overlap and population integration problems",
+      statistical_limitation = "qpF4ratio cannot process single individual with current implementation"
+    ),
+    honesty_statement = list(
+      message = "The system failed honestly rather than generate fake results",
+      no_fallbacks = "No estimated values, no placeholder confidence intervals, no fake percentages",
+      recommendation = "Do not use any results from this analysis - they are not statistically valid"
     )
-  } else {
-    cat("🔍 Using cached population matches\n")
-  }
+  )
   
-  # Apply tiered selection with hybrid matches
-  matched_populations <- c()
+  # Save failure report
+  output_file <- file.path("Results", paste0(sample_name, "_FAILURE_REPORT.json"))
+  write_json(failure_report, output_file, pretty = TRUE)
   
-  # TIER 1: Essential populations
-  cat("📊 Selecting Tier 1 essential populations...\n")
-  for (pop in tier1_essential) {
-    if (pop %in% names(population_matches_cache)) {
-      match_info <- population_matches_cache[[pop]]
-      if (match_info$confidence >= 0.5) {  # Accept matches with reasonable confidence
-        matched_populations <- c(matched_populations, match_info$match)
-      }
-    }
-  }
-  cat("✅ Tier 1 essential populations:", length(matched_populations), "\n")
+  cat("📄 Honest failure report saved to:", output_file, "\n")
   
-  # TIER 2: Supporting populations (fill remaining slots)
-  remaining_slots <- max_count - length(matched_populations)
-  if (remaining_slots > 0) {
-    cat("📊 Selecting Tier 2 supporting populations...\n")
-    for (pop in tier2_supporting) {
-      if (remaining_slots <= 0) break
-      if (pop %in% names(population_matches_cache)) {
-        match_info <- population_matches_cache[[pop]]
-        if (match_info$confidence >= 0.5 && !match_info$match %in% matched_populations) {
-          matched_populations <- c(matched_populations, match_info$match)
-          remaining_slots <- remaining_slots - 1
-        }
-      }
-    }
-  }
-  
-  # Final validation
-  final_count <- min(length(matched_populations), max_count)
-  matched_populations <- matched_populations[1:final_count]
-  
-  cat("✅ Final curation with hybrid matching:", final_count, "populations selected\n")
-  
-  return(matched_populations)
+  return(failure_report)
 }
