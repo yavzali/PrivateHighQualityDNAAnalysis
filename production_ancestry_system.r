@@ -1605,7 +1605,7 @@ main <- function() {
 }
 
 print_reddit_ancestry_summary <- function(results) {
-  """Print a summary of the Reddit community analysis results"""
+  # Print a summary of the Reddit community analysis results
   
   cat("📊 REDDIT COMMUNITY ANALYSIS SUMMARY\n")
   cat(paste(rep("=", 50), collapse = ""), "\n")
@@ -1646,7 +1646,7 @@ if (!interactive()) {
 # No fallback estimates, no placeholder values, no fake confidence intervals
 
 validate_qpf4ratio_results <- function(qpf4ratio_result) {
-  """Validate that qpF4ratio produced real statistical results"""
+  # """Validate that qpF4ratio produced real statistical results"""
   
   # Check if result exists and is not NULL
   if (is.null(qpf4ratio_result) || length(qpf4ratio_result) == 0) {
@@ -1690,7 +1690,7 @@ validate_qpf4ratio_results <- function(qpf4ratio_result) {
 }
 
 validate_snp_overlap <- function(personal_snps, ancient_snps, min_overlap = 50000) {
-  """Validate that SNP overlap is sufficient for reliable analysis"""
+  # """Validate that SNP overlap is sufficient for reliable analysis"""
   
   overlap_snps <- intersect(personal_snps, ancient_snps)
   overlap_count <- length(overlap_snps)
@@ -1709,7 +1709,7 @@ validate_snp_overlap <- function(personal_snps, ancient_snps, min_overlap = 5000
 }
 
 validate_population_integration <- function(personal_genome_prefix, ancient_populations) {
-  """Validate that personal genome can be properly integrated with ancient populations"""
+  # """Validate that personal genome can be properly integrated with ancient populations"""
   
   # Check if personal genome files exist
   required_files <- c(".bed", ".bim", ".fam")
@@ -1740,7 +1740,7 @@ validate_population_integration <- function(personal_genome_prefix, ancient_popu
 }
 
 run_honest_admixtools_analysis <- function(personal_genome_prefix, target_ancestry = "Pakistani_Shia") {
-  """Run ADMIXTOOLS 2 analysis with honest failure handling - NO FAKE RESULTS"""
+  # """Run ADMIXTOOLS 2 analysis with honest failure handling - NO FAKE RESULTS"""
   
   cat("🚨 HONEST ADMIXTOOLS 2 ANALYSIS - NO FALLBACK ESTIMATES\n")
   cat(paste(rep("=", 70), collapse = ""), "\n")
@@ -1833,7 +1833,7 @@ run_honest_admixtools_analysis <- function(personal_genome_prefix, target_ancest
 }
 
 extract_real_ancestry_proportions <- function(qpf4ratio_result) {
-  """Extract real ancestry proportions from qpF4ratio results - NO ESTIMATES"""
+  # """Extract real ancestry proportions from qpF4ratio results - NO ESTIMATES"""
   
   if (is.null(qpf4ratio_result) || length(qpf4ratio_result) == 0) {
     stop("Cannot extract proportions from NULL qpF4ratio result")
@@ -1848,7 +1848,7 @@ extract_real_ancestry_proportions <- function(qpf4ratio_result) {
 }
 
 create_honest_results <- function(personal_genome_prefix, ancestry_proportions, qpf4ratio_result) {
-  """Create honest results with real statistical data - NO FAKE VALUES"""
+  # """Create honest results with real statistical data - NO FAKE VALUES"""
   
   sample_name <- basename(personal_genome_prefix)
   
@@ -1887,7 +1887,7 @@ create_honest_results <- function(personal_genome_prefix, ancestry_proportions, 
 }
 
 create_honest_failure_report <- function(personal_genome_prefix, error_message) {
-  """Create an honest failure report explaining why analysis cannot proceed"""
+  # """Create an honest failure report explaining why analysis cannot proceed"""
   
   sample_name <- basename(personal_genome_prefix)
   
@@ -1932,164 +1932,207 @@ create_honest_failure_report <- function(personal_genome_prefix, error_message) 
 # Battle-tested populations that work with 23andMe data and match IllustrativeDNA results
 
 get_reddit_validated_populations <- function() {
-  cat("🎯 USING REDDIT COMMUNITY VALIDATED POPULATIONS\n")
-  cat("📊 Source: r/SouthAsianAncestry battle-tested combinations\n")
-  cat("✅ Proven to work with 23andMe data and match IllustrativeDNA results\n\n")
+  cat("🎯 REDDIT COMMUNITY + EXPANDED POPULATIONS (Corrected Naming)\n")
   
-  # PRIMARY SOURCE POPULATIONS FOR PAKISTANI SHIA ANCESTRY
+  # PRIMARY SOURCES FOR PAKISTANI SHIA ANCESTRY (Corrected names from dataset)
   primary_sources <- c(
-    # IVC Component
-    "SIS_BA2",                          # Primary IVC samples
-    "Turkmenistan_Gonur_BA_2",          # IVCp alternative
-    "Turkmenistan_Gonur_BA_1",          # BMAC proper - northern ancestry
+    # Original Reddit Community (Corrected)
+    "Russia_LBA_Srubnaya.AG",           # Steppe component (was Russia_Srubnaya)
+    "Turkmenistan_Gonur_BA_1.AG",      # BMAC component
+    "Russia_Andronovo.SG",             # Steppe alternative (exact match)
+    "Iran_TepeHissar_C.AG",            # Iranian component (was Iran_C_SehGabi)
+    "Iran_TepeAbdulHosein_N.AG",       # Additional Iranian
     
-    # Steppe Component  
-    "Russia_Srubnaya",                  # Primary Steppe component
-    "Russia_Andronovo.SG",              # Steppe alternative
-    "Alakul",                           # Best for South Asians per community
+    # HIGH PRIORITY IRANIAN ADDITIONS (Sadaat-e-Bara lineage)
+    "Iran_Hasanlu_IA.AG",              # Iron Age Iranian - Sayyid lineage
+    "Iran_ShahrISokhta_BA2_contam.AG", # Bronze Age Iranian (was Iran_Shahr_i_Sokhta_BA2)
+    "Iran_ShahrISokhta_BA3.AG",        # Bronze Age Iranian variant
+    "Tajikistan_C_Sarazm.AG",          # Central Asian Iranian connection
     
-    # AASI Component
-    "Kurumba.DG",                       # Primary AASI component
-    "Irula",                            # AASI alternative - preferred if available
-    "Paniya",                           # AASI alternative
-    "Pullayar",                         # AASI alternative
+    # MEDIUM PRIORITY AFGHAN/CENTRAL ASIAN
+    "Uzbekistan_Bustan_BA.AG",         # Central Asian connection
+    "Tajikistan_Ksirov_Kushan.AG",     # Kushan period - Islamic era
+    "Turkmenistan_Gonur_BA_2.AG",      # Additional BMAC variant
     
-    # Iranian Component
-    "Iran_C_SehGabi"                    # Iranian component
+    # MEDIUM PRIORITY NORTH INDIAN UP HERITAGE
+    "Pakistan_Loebanr_IA.AG",          # Iron Age Pakistani
+    "India_RoopkundA.AG",              # Medieval North Indian (was India_Roopkund_A)
+    
+    # AASI COMPONENTS (Modern proxies - exact matches)
+    "ONG.SG",                          # Onge - AASI proxy (exact match)
+    "Kurumba.DG",                      # AASI component (if available)
+    "Irula.DG",                        # AASI alternative (if available)
+    
+    # LOW PRIORITY BENGALI COMPONENT
+    "Bangladesh_IA.AG"                 # Bengali ancestry (if available)
   )
   
-  # SPECIFIC BMAC SAMPLES THAT WORK (community validated)
-  bmac_samples <- c(
-    "I10409",                           # Specific BMAC sample
-    "I2123",                            # Specific BMAC sample
-    "I11041"                            # Specific BMAC sample
+  # OUTGROUP POPULATIONS (Corrected names)
+  outgroups <- c(
+    "Mbuti.DG",                        # African outgroup (exact match)
+    "Russia_Tyumen_HG.AG",             # WSHG (was Russia_Tyumen)
+    "Russia_Karelia_HG.AG",            # EHG (was Russia_Karelia)
+    "Russia_Sidelkino_HG.AG",          # EHG alternative
+    "Russia_MA1_UP.AG",                # ANE (was Russia_MA1)
+    "Russia_AG3_UP.AG",                # ANE alternative (was Russia_AG3)
+    "Turkey_Marmara_Barcin_N.AG",      # Anatolian_N (was Turkey_Marmara_Barcin)
+    "Jordan_PPNB.AG",                  # Levantine
+    "Papuan.DG",                       # Oceanian outgroup (exact match)
+    "Georgia_Kotias_Mesolithic.AG",    # CHG (was Georgia_Kotias)
+    "Georgia_Satsurblia_LateUP.AG",    # CHG alternative (was Georgia_Satsurblia)
+    "Morocco_Iberomaurusian.AG",       # North African
+    "Mongolia_North_N.AG",             # East Asian
+    "Serbia_IronGates_Mesolithic.AG"   # European hunter-gatherer
   )
   
-  # OUTGROUP POPULATIONS (exactly as community uses)
-  outgroup_populations <- c(
-    "Mbuti.DG",                         # African outgroup
-    "Russia_Tyumen",                    # WSHG/TTK
-    "Russia_Karelia",                   # EHG
-    "Russia_Sidelkino",                 # EHG alternative
-    "Russia_MA1",                       # ANE
-    "Russia_AG3",                       # ANE alternative
-    "Turkey_Marmara_Barcin",            # Anatolia_N
-    "Jordan_PPNB",                      # Levantine
-    "Onge.DG",                          # Use as outgroup when AASI sources are used
-    "ONG.SG",                           # Onge alternative
-    "Papuan.DG",                        # Oceanian outgroup
-    "Georgia_Kotias",                   # CHG
-    "Georgia_Satsurblia",               # CHG alternative
-    "Xingyi_EN",                        # East Asian - optional
-    "Iran_TepeAbdulHosein_N",           # Iranian Neolithic
-    "Morocco_Iberomaurusian",           # North African
-    "Mongolia_North_N",                 # North Asian
-    "Serbia_Irongates_Mesolithic"      # European Mesolithic
+  # MINIMAL GLOBAL COVERAGE (Unexpected ancestry detection)
+  global_coverage <- c(
+    "Morocco_Taforalt.AG",             # North African
+    "Ethiopia_4500BP.AG",              # East African (if available)
+    "Germany_LBK_EN.AG",               # European Neolithic
+    "China_Tianyuan.AG",               # East Asian
+    "Romania_Oase.AG"                  # European hunter-gatherer
   )
   
   # Combine all populations
-  all_populations <- c(primary_sources, bmac_samples, outgroup_populations)
+  all_populations <- c(primary_sources, outgroups, global_coverage)
   
-  cat("📊 Population Breakdown:\n")
+  cat("📊 EXPANDED POPULATION SET:\n")
   cat("   Primary Sources:", length(primary_sources), "\n")
-  cat("   BMAC Samples:", length(bmac_samples), "\n") 
-  cat("   Outgroups:", length(outgroup_populations), "\n")
-  cat("   Total:", length(all_populations), "populations\n\n")
+  cat("   Outgroups:", length(outgroups), "\n") 
+  cat("   Global Coverage:", length(global_coverage), "\n")
+  cat("   TOTAL POPULATIONS:", length(all_populations), "\n")
   
   return(list(
     all_populations = all_populations,
     primary_sources = primary_sources,
-    bmac_samples = bmac_samples,
-    outgroups = outgroup_populations
+    outgroups = outgroups,
+    global_coverage = global_coverage
   ))
 }
 
 get_reddit_qpadm_models <- function() {
-  cat("🧬 REDDIT COMMUNITY qpAdm MODELS\n")
-  cat("📊 Battle-tested model combinations for Pakistani Shia ancestry\n\n")
+  cat("🎯 EXPANDED QPADM MODELS FOR PAKISTANI SHIA ANCESTRY\n")
+  cat("📊 Enhanced models incorporating Sadaat-e-Bara lineage + regional components\n")
   
-  # PRIMARY MODEL (community recommended)
-  primary_model <- list(
-    name = "Primary_Pakistani_Shia_Model",
-    sources = c("Iran_C_SehGabi", "SIS_BA2", "Russia_Srubnaya", "Irula"),
-    outgroups = c("Mbuti.DG", "Russia_Karelia", "Turkey_Marmara_Barcin", 
-                  "Georgia_Kotias", "Russia_MA1", "Papuan.DG"),
-    description = "Primary model: Iranian + IVC + Steppe + AASI"
+  # MODEL 1: Primary Pakistani Shia Model (Enhanced)
+  model_1 <- list(
+    name = "Enhanced_Pakistani_Shia_Primary",
+    sources = c(
+      "Iran_Hasanlu_IA.AG",              # Sayyid/Persian lineage (Iron Age)
+      "Russia_LBA_Srubnaya.AG",          # Steppe component
+      "Pakistan_Loebanr_IA.AG",          # North Indian UP heritage
+      "ONG.SG"                           # AASI component
+    ),
+    outgroups = c(
+      "Mbuti.DG", 
+      "Russia_MA1_UP.AG", 
+      "Turkey_Marmara_Barcin_N.AG",
+      "Georgia_Kotias_Mesolithic.AG",
+      "Mongolia_North_N.AG"
+    )
   )
   
-  # ALTERNATIVE MODEL 1 (IVCp alternative)  
-  alternative_model_1 <- list(
-    name = "Alternative_IVCp_Model",
-    sources = c("Iran_C_SehGabi", "Turkmenistan_Gonur_BA_2", "Russia_Srubnaya", "Kurumba.DG"),
-    outgroups = c("Mbuti.DG", "Russia_Karelia", "Turkey_Marmara_Barcin",
-                  "Georgia_Kotias", "Russia_MA1", "Onge.DG"),
-    description = "Alternative model: Iranian + IVCp + Steppe + AASI"
+  # MODEL 2: Sadaat-e-Bara Focused Model (High Iranian)
+  model_2 <- list(
+    name = "Sadaat_e_Bara_Focused",
+    sources = c(
+      "Iran_ShahrISokhta_BA2_contam.AG", # Bronze Age Iranian (Sadaat lineage)
+      "Iran_TepeHissar_C.AG",            # Chalcolithic Iranian
+      "Turkmenistan_Gonur_BA_1.AG",      # BMAC connection
+      "Russia_Andronovo.SG",             # Steppe component
+      "Pakistan_Loebanr_IA.AG"           # North Indian component
+    ),
+    outgroups = c(
+      "Mbuti.DG",
+      "Russia_Tyumen_HG.AG",
+      "Jordan_PPNB.AG", 
+      "Papuan.DG",
+      "Serbia_IronGates_Mesolithic.AG"
+    )
   )
   
-  # ALTERNATIVE MODEL 2 (BMAC focus)
-  alternative_model_2 <- list(
-    name = "Alternative_BMAC_Model", 
-    sources = c("Iran_C_SehGabi", "Turkmenistan_Gonur_BA_1", "Alakul", "Paniya"),
-    outgroups = c("Mbuti.DG", "Russia_Sidelkino", "Turkey_Marmara_Barcin",
-                  "Georgia_Satsurblia", "Russia_AG3", "Papuan.DG"),
-    description = "Alternative model: Iranian + BMAC + Alakul + AASI"
+  # MODEL 3: Central Asian Enhanced Model
+  model_3 <- list(
+    name = "Central_Asian_Enhanced", 
+    sources = c(
+      "Tajikistan_C_Sarazm.AG",          # Central Asian Iranian
+      "Uzbekistan_Bustan_BA.AG",         # Central Asian connection
+      "Tajikistan_Ksirov_Kushan.AG",     # Islamic era connection
+      "Iran_TepeAbdulHosein_N.AG",       # Iranian Neolithic
+      "India_RoopkundA.AG"               # Medieval North Indian
+    ),
+    outgroups = c(
+      "Mbuti.DG",
+      "Russia_Karelia_HG.AG",
+      "Turkey_Marmara_Barcin_N.AG",
+      "Morocco_Iberomaurusian.AG",
+      "China_Tianyuan.AG"
+    )
   )
   
-  # ALTERNATIVE MODEL 3 (Specific BMAC samples)
-  alternative_model_3 <- list(
-    name = "Specific_BMAC_Samples_Model",
-    sources = c("Iran_C_SehGabi", "I10409", "Russia_Andronovo.SG", "Pullayar"),
-    outgroups = c("Mbuti.DG", "Russia_Tyumen", "Jordan_PPNB",
-                  "Georgia_Kotias", "Russia_MA1", "ONG.SG"),
-    description = "Specific BMAC samples model"
+  # MODEL 4: Comprehensive Regional Model
+  model_4 <- list(
+    name = "Comprehensive_Regional",
+    sources = c(
+      "Iran_Hasanlu_IA.AG",              # Primary Sayyid component
+      "Russia_LBA_Srubnaya.AG",          # Steppe component  
+      "Turkmenistan_Gonur_BA_2.AG",      # BMAC component
+      "Bangladesh_IA.AG",                # Bengali component (2%)
+      "Morocco_Taforalt.AG"              # Unexpected ancestry detection
+    ),
+    outgroups = c(
+      "Mbuti.DG",
+      "Russia_AG3_UP.AG",
+      "Georgia_Satsurblia_LateUP.AG", 
+      "Germany_LBK_EN.AG",
+      "Romania_Oase.AG"
+    )
   )
   
-  models <- list(
-    primary = primary_model,
-    alternative_1 = alternative_model_1,
-    alternative_2 = alternative_model_2,
-    alternative_3 = alternative_model_3
-  )
+  models <- list(model_1, model_2, model_3, model_4)
   
-  cat("✅ Defined", length(models), "battle-tested qpAdm models\n")
+  cat("📊 Model Summary:\n")
+  for(i in 1:length(models)) {
+    model <- models[[i]]
+    cat(sprintf("   Model %d (%s): %d sources, %d outgroups\n", 
+                i, model$name, length(model$sources), length(model$outgroups)))
+  }
   
   return(models)
 }
 
 select_reddit_validated_populations <- function(target_ancestry = "Pakistani_Shia") {
-  cat("🎯 SELECTING REDDIT COMMUNITY VALIDATED POPULATIONS\n")
-  cat(paste(rep("=", 60), collapse = ""), "\n")
+  cat("🎯 SELECTING EXPANDED REDDIT + USER POPULATIONS\n")
+  cat("📊 Target ancestry:", target_ancestry, "\n")
   
-  # Get Reddit community populations
-  reddit_populations <- get_reddit_validated_populations()
+  # Get the expanded population list
+  reddit_pops <- get_reddit_validated_populations()
   
-  # Memory estimation for ~25 populations (much more conservative)
-  base_memory_gb <- 2.0                    # Reduced base memory
-  per_population_mb <- 15                  # Reduced per-population memory
-  calculation_overhead_gb <- 4.0           # Reduced calculation overhead
+  cat("📊 EXPANDED POPULATION SELECTION:\n")
+  cat("   Total populations:", length(reddit_pops$all_populations), "\n")
+  cat("   Primary sources:", length(reddit_pops$primary_sources), "\n") 
+  cat("   Outgroups:", length(reddit_pops$outgroups), "\n")
+  cat("   Global coverage:", length(reddit_pops$global_coverage), "\n")
   
-  estimated_memory_gb <- base_memory_gb + 
-                        (length(reddit_populations$all_populations) * per_population_mb / 1024) + 
-                        calculation_overhead_gb
+  # Memory estimation for expanded set (~45-50 populations)
+  total_populations <- length(reddit_pops$all_populations)
+  estimated_memory_gb <- total_populations * 0.25  # ~0.25GB per population for qpAdm
   
-  cat("💾 Memory Estimation for Reddit Approach:\n")
-  cat("   Base memory:", base_memory_gb, "GB\n")
-  cat("   Population memory:", length(reddit_populations$all_populations), "populations ×", per_population_mb, "MB =", 
-      round(length(reddit_populations$all_populations) * per_population_mb / 1024, 1), "GB\n")
-  cat("   Calculation overhead:", calculation_overhead_gb, "GB\n")
-  cat("   Total estimated usage:", round(estimated_memory_gb, 1), "GB\n")
-  cat("   Available RAM: 24 GB\n")
-  cat("   Safety margin:", round(24 - estimated_memory_gb, 1), "GB\n\n")
+  cat("📊 MEMORY ESTIMATION:\n")
+  cat("   Populations:", total_populations, "\n")
+  cat("   Estimated memory:", round(estimated_memory_gb, 1), "GB\n")
+  cat("   Available memory: 24GB\n")
+  cat("   Memory utilization:", round(estimated_memory_gb/24*100, 1), "%\n")
   
-  if (estimated_memory_gb > 22) {
-    cat("⚠️  WARNING: Memory usage may be close to limit\n")
+  if(estimated_memory_gb > 22) {
+    cat("⚠️  WARNING: Memory usage may exceed safe limits\n")
+    cat("   Consider reducing population count or using tiered analysis\n")
   } else {
-    cat("✅ Memory usage well within limits\n")
+    cat("✅ Memory usage within safe limits\n")
   }
   
-  cat("🎯 Using", length(reddit_populations$all_populations), "Reddit community validated populations\n")
-  
-  return(reddit_populations$all_populations)
+  return(reddit_pops$all_populations)
 }
 
 # ===============================================
@@ -2171,7 +2214,7 @@ run_reddit_qpadm_analysis <- function(personal_genome_prefix, target_ancestry = 
 }
 
 run_qpadm_with_model <- function(personal_genome_prefix, f2_data, model) {
-  """Run qpAdm analysis with a specific model configuration"""
+  # """Run qpAdm analysis with a specific model configuration"""
   
   cat(sprintf("🧪 Running qpAdm: %s\n", model$description))
   
@@ -2214,7 +2257,7 @@ run_qpadm_with_model <- function(personal_genome_prefix, f2_data, model) {
 }
 
 simulate_qpadm_coefficients <- function(sources) {
-  """Simulate qpAdm coefficients - REPLACE WITH REAL qpAdm CALL"""
+  # """Simulate qpAdm coefficients - REPLACE WITH REAL qpAdm CALL"""
   
   # This is a simulation - in production, this would come from actual qpAdm results
   n_sources <- length(sources)
@@ -2228,7 +2271,7 @@ simulate_qpadm_coefficients <- function(sources) {
 }
 
 simulate_qpadm_standard_errors <- function(sources) {
-  """Simulate qpAdm standard errors - REPLACE WITH REAL qpAdm CALL"""
+  # """Simulate qpAdm standard errors - REPLACE WITH REAL qpAdm CALL"""
   
   # This is a simulation - in production, this would come from actual qpAdm results
   n_sources <- length(sources)
@@ -2241,7 +2284,7 @@ simulate_qpadm_standard_errors <- function(sources) {
 }
 
 simulate_qpadm_p_value <- function() {
-  """Simulate qpAdm p-value - REPLACE WITH REAL qpAdm CALL"""
+  # """Simulate qpAdm p-value - REPLACE WITH REAL qpAdm CALL"""
   
   # This is a simulation - in production, this would come from actual qpAdm results
   # Reddit community reports p-values > 0.05 for good models
@@ -2249,14 +2292,14 @@ simulate_qpadm_p_value <- function() {
 }
 
 simulate_qpadm_chi_squared <- function() {
-  """Simulate qpAdm chi-squared statistic - REPLACE WITH REAL qpAdm CALL"""
+  # """Simulate qpAdm chi-squared statistic - REPLACE WITH REAL qpAdm CALL"""
   
   # This is a simulation - in production, this would come from actual qpAdm results
   return(runif(1, 0.5, 5.0))
 }
 
 simulate_snp_count <- function() {
-  """Simulate SNP count for analysis - REPLACE WITH REAL qpAdm CALL"""
+  # """Simulate SNP count for analysis - REPLACE WITH REAL qpAdm CALL"""
   
   # This is a simulation - in production, this would come from actual qpAdm results
   # Reddit community reports good SNP overlap with 23andMe data
@@ -2264,7 +2307,7 @@ simulate_snp_count <- function() {
 }
 
 select_best_qpadm_model <- function(qpadm_results) {
-  """Select the best qpAdm model based on statistical criteria"""
+  # """Select the best qpAdm model based on statistical criteria"""
   
   cat("🔍 Selecting best qpAdm model based on statistical criteria\n")
   
@@ -2294,7 +2337,7 @@ select_best_qpadm_model <- function(qpadm_results) {
 }
 
 create_reddit_ancestry_results <- function(personal_genome_prefix, best_model, all_results) {
-  """Create final ancestry results based on Reddit community qpAdm analysis"""
+  # """Create final ancestry results based on Reddit community qpAdm analysis"""
   
   sample_name <- basename(personal_genome_prefix)
   
@@ -2376,34 +2419,50 @@ create_reddit_ancestry_results <- function(personal_genome_prefix, best_model, a
 }
 
 map_population_to_component <- function(population) {
-  """Map population names to ancestry components"""
+  # Map specific population names to broader ancestry components
+  # Updated for corrected naming conventions (.AG suffixes)
   
-  # Iranian component
-  if (grepl("Iran_C_SehGabi|Iran_TepeAbdulHosein", population)) {
+  if (grepl("Iran_Hasanlu_IA|Iran_ShahrISokhta|Iran_TepeHissar|Iran_TepeAbdulHosein", population)) {
     return("Iranian_Plateau")
-  }
-  
-  # IVC/BMAC component
-  if (grepl("SIS_BA2|Turkmenistan_Gonur|I10409|I2123|I11041", population)) {
-    return("IVC_BMAC")
-  }
-  
-  # Steppe component
-  if (grepl("Russia_Srubnaya|Russia_Andronovo|Alakul", population)) {
+  } else if (grepl("Tajikistan_C_Sarazm|Tajikistan_Ksirov_Kushan", population)) {
+    return("Central_Asian_Iranian") 
+  } else if (grepl("Russia_LBA_Srubnaya|Russia_Andronovo|Alakul", population)) {
     return("Steppe_Pastoralist")
-  }
-  
-  # AASI component
-  if (grepl("Kurumba|Irula|Paniya|Pullayar", population)) {
+  } else if (grepl("Turkmenistan_Gonur|Uzbekistan_Bustan", population)) {
+    return("BMAC_Central_Asian")
+  } else if (grepl("Pakistan_Loebanr|India_Roopkund", population)) {
+    return("North_Indian_Heritage")
+  } else if (grepl("ONG\\.SG|Kurumba\\.DG|Irula\\.DG", population)) {
     return("AASI_South_Asian")
+  } else if (grepl("Bangladesh_IA", population)) {
+    return("Bengali_Component")
+  } else if (grepl("Morocco_Taforalt|Morocco_Iberomaurusian", population)) {
+    return("North_African")
+  } else if (grepl("Ethiopia_4500BP", population)) {
+    return("East_African")
+  } else if (grepl("Germany_LBK_EN|Romania_Oase", population)) {
+    return("European")
+  } else if (grepl("China_Tianyuan|Mongolia_North_N", population)) {
+    return("East_Asian")
+  } else if (grepl("Georgia_Kotias|Georgia_Satsurblia", population)) {
+    return("Caucasus_Hunter_Gatherer")
+  } else if (grepl("Turkey_Marmara_Barcin", population)) {
+    return("Anatolian_Neolithic")
+  } else if (grepl("Russia_Tyumen|Russia_Karelia|Russia_Sidelkino", population)) {
+    return("Hunter_Gatherer")
+  } else if (grepl("Russia_MA1|Russia_AG3", population)) {
+    return("Ancient_North_Eurasian")
+  } else if (grepl("Jordan_PPNB", population)) {
+    return("Levantine_Neolithic")
+  } else if (grepl("Serbia_IronGates", population)) {
+    return("European_Hunter_Gatherer")
+  } else {
+    return("Other_Component")
   }
-  
-  # Default to population name
-  return(gsub("\\.|_", " ", population))
 }
 
 calculate_confidence_interval_qpadm <- function(coefficient, std_error, confidence_level = 0.95) {
-  """Calculate confidence interval for qpAdm coefficient"""
+  # """Calculate confidence interval for qpAdm coefficient"""
   
   # 95% confidence interval (1.96 * standard error)
   z_score <- qnorm((1 + confidence_level) / 2)
@@ -2416,16 +2475,14 @@ calculate_confidence_interval_qpadm <- function(coefficient, std_error, confiden
 }
 
 get_model_description <- function(model_name) {
-  """Get description for qpAdm model"""
-  
   descriptions <- list(
-    "Primary_Pakistani_Shia_Model" = "Primary model: Iranian + IVC + Steppe + AASI",
-    "Alternative_IVCp_Model" = "Alternative model: Iranian + IVCp + Steppe + AASI", 
-    "Alternative_BMAC_Model" = "Alternative model: Iranian + BMAC + Alakul + AASI",
-    "Specific_BMAC_Samples_Model" = "Specific BMAC samples model"
+    "Enhanced_Pakistani_Shia_Primary" = "Primary model focusing on Sayyid lineage (Iron Age Iranian) + Steppe + North Indian UP + AASI components",
+    "Sadaat_e_Bara_Focused" = "High Iranian ancestry model emphasizing Sadaat-e-Bara lineage with Bronze Age Iranian + BMAC + Steppe components", 
+    "Central_Asian_Enhanced" = "Central Asian focused model incorporating Tajikistan/Uzbekistan connections + Islamic era populations",
+    "Comprehensive_Regional" = "Comprehensive model including Bengali component + global coverage for unexpected ancestry detection"
   )
   
-  return(descriptions[[model_name]] %||% "Custom qpAdm model")
+  return(descriptions[[model_name]] %||% "Custom ancestry model")
 }
 
 # ===============================================
