@@ -121,3 +121,24 @@ tmp/
 # Keep example/template files
 !google_credentials.json.template
 !example_genome.txt 
+
+# ===============================================
+# 🖥️ SYSTEM FILES (macOS, Windows, Linux)
+# ===============================================
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+
+# Windows
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Linux
+*~
+.directory 

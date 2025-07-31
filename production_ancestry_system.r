@@ -2233,20 +2233,8 @@ run_qpadm_with_model <- function(personal_genome_prefix, f2_data, model) {
     # This would be the actual qpAdm call with the model configuration
     # For now, we'll simulate the structure that qpAdm would return
     
-    # Simulate qpAdm results structure based on community reports
-    qpadm_result <- list(
-      model_name = model$name,
-      sources = model$sources,
-      outgroups = model$outgroups,
-      # These would be real results from qpAdm
-      coefficients = simulate_qpadm_coefficients(model$sources),
-      standard_errors = simulate_qpadm_standard_errors(model$sources),
-      p_value = simulate_qpadm_p_value(),
-      chi_squared = simulate_qpadm_chi_squared(),
-      degrees_of_freedom = length(model$sources) - 1,
-      n_snps = simulate_snp_count(),
-      model_fit = "PASSED"  # or "FAILED" based on p-value
-    )
+    # Execute real qpAdm analysis - NO SIMULATION
+    qpadm_result <- run_real_qpadm_analysis(personal_genome_prefix, f2_data, model)
     
     return(qpadm_result)
     
@@ -2256,54 +2244,21 @@ run_qpadm_with_model <- function(personal_genome_prefix, f2_data, model) {
   })
 }
 
-simulate_qpadm_coefficients <- function(sources) {
-  # """Simulate qpAdm coefficients - REPLACE WITH REAL qpAdm CALL"""
+run_real_qpadm_analysis <- function(personal_genome_prefix, f2_data, model) {
+  # Real qpAdm analysis - NO SIMULATION
   
-  # This is a simulation - in production, this would come from actual qpAdm results
-  n_sources <- length(sources)
+  cat("🧬 RUNNING REAL qpAdm ANALYSIS\n")
+  cat("   Model:", model$name, "\n")
+  cat("   Sources:", length(model$sources), "\n")
+  cat("   Outgroups:", length(model$outgroups), "\n")
   
-  # Generate realistic coefficients that sum to 1
-  raw_coeffs <- runif(n_sources, 0.1, 0.8)
-  normalized_coeffs <- raw_coeffs / sum(raw_coeffs)
+  # This is where real ADMIXTOOLS 2 qpAdm would be called
+  # For now, this will fail honestly since real implementation is not ready
   
-  names(normalized_coeffs) <- sources
-  return(normalized_coeffs)
-}
-
-simulate_qpadm_standard_errors <- function(sources) {
-  # """Simulate qpAdm standard errors - REPLACE WITH REAL qpAdm CALL"""
-  
-  # This is a simulation - in production, this would come from actual qpAdm results
-  n_sources <- length(sources)
-  
-  # Generate realistic standard errors (typically 0.01-0.1 for good models)
-  std_errors <- runif(n_sources, 0.01, 0.08)
-  
-  names(std_errors) <- sources
-  return(std_errors)
-}
-
-simulate_qpadm_p_value <- function() {
-  # """Simulate qpAdm p-value - REPLACE WITH REAL qpAdm CALL"""
-  
-  # This is a simulation - in production, this would come from actual qpAdm results
-  # Reddit community reports p-values > 0.05 for good models
-  return(runif(1, 0.1, 0.8))
-}
-
-simulate_qpadm_chi_squared <- function() {
-  # """Simulate qpAdm chi-squared statistic - REPLACE WITH REAL qpAdm CALL"""
-  
-  # This is a simulation - in production, this would come from actual qpAdm results
-  return(runif(1, 0.5, 5.0))
-}
-
-simulate_snp_count <- function() {
-  # """Simulate SNP count for analysis - REPLACE WITH REAL qpAdm CALL"""
-  
-  # This is a simulation - in production, this would come from actual qpAdm results
-  # Reddit community reports good SNP overlap with 23andMe data
-  return(sample(50000:200000, 1))
+  stop("🚨 REAL qpAdm IMPLEMENTATION NOT YET AVAILABLE\n",
+       "📋 The system refuses to generate fake results.\n",
+       "📋 Real ADMIXTOOLS 2 qpAdm integration is required for production analysis.\n",
+       "📋 Current status: Population validation complete, qpAdm implementation pending.")
 }
 
 select_best_qpadm_model <- function(qpadm_results) {
